@@ -44,8 +44,6 @@ import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.user.UserManager;
 import dev.aurelium.auraskills.common.util.PlatformUtil;
 import dev.aurelium.auraskills.sponge.antiafk.AntiAfkManager;
-import dev.aurelium.auraskills.sponge.api.ApiAuraSkillsBukkit;
-import dev.aurelium.auraskills.sponge.api.ApiBukkitRegistrationUtil;
 import dev.aurelium.auraskills.sponge.api.implementation.BukkitApiProvider;
 import dev.aurelium.auraskills.sponge.commands.CommandRegistrar;
 import dev.aurelium.auraskills.sponge.commands.ConfirmManager;

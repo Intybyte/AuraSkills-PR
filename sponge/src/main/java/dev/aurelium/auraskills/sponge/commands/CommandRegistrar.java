@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.commands;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MinecraftMessageKeys;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.SpongeCommandManager;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
 import dev.aurelium.auraskills.api.skill.CustomSkill;
@@ -18,8 +18,9 @@ import dev.aurelium.auraskills.common.commands.ManaCommand;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.message.type.CommandMessage;
 import dev.aurelium.auraskills.common.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.*;
 
@@ -31,10 +32,10 @@ public class CommandRegistrar {
         this.plugin = plugin;
     }
 
-    public PaperCommandManager registerCommands() {
-        var manager = new PaperCommandManager(plugin);
+    public SpongeCommandManager registerCommands() {
+        var manager = new SpongeCommandManager(plugin);
         manager.enableUnstableAPI("help");
-        manager.usePerIssuerLocale(true, false);
+        manager.usePerIssuerLocale(true);
         manager.getCommandReplacements().addReplacement("skills_alias", "skills|sk|skill");
 
         registerConditions(manager);
@@ -45,7 +46,7 @@ public class CommandRegistrar {
         return manager;
     }
 
-    private void registerConditions(PaperCommandManager manager) {
+    private void registerConditions(SpongeCommandManager manager) {
         manager.getCommandConditions().addCondition(Integer.class, "limits", (c, exec, value) -> {
             if (value == null) {
                 return;
@@ -59,13 +60,13 @@ public class CommandRegistrar {
         });
     }
 
-    private void registerContexts(PaperCommandManager manager) {
+    private void registerContexts(SpongeCommandManager manager) {
         var contexts = manager.getCommandContexts();
         contexts.registerContext(User.class, c -> {
             String username = c.popFirstArg();
-            Player player = Bukkit.getPlayerExact(username);
-            if (player != null) {
-                return plugin.getUser(player);
+            Optional<ServerPlayer> player = Sponge.game().server().player(username);
+            if (player.isPresent()) {
+                return plugin.getUser(player.get());
             } else {
                 throw new InvalidCommandArgument(MinecraftMessageKeys.NO_PLAYER_FOUND_SERVER, "{search}", username);
             }
@@ -74,7 +75,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Skill skill = plugin.getSkillRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (skill == null || !skill.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getSender());
+                Locale locale = plugin.getLocale(c.getIssuer());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_SKILL, locale));
             }
             return skill;
@@ -83,7 +84,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             ManaAbility manaAbility = plugin.getManaAbilityRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (manaAbility == null || !manaAbility.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getSender());
+                Locale locale = plugin.getLocale(c.getIssuer());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_MANA_ABILITY, locale));
             }
             return manaAbility;
@@ -92,7 +93,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Stat stat = plugin.getStatRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (stat == null || !stat.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getSender());
+                Locale locale = plugin.getLocale(c.getIssuer());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_STAT, locale));
             }
             return stat;
@@ -101,7 +102,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Trait trait = plugin.getTraitRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (trait == null || !trait.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getSender());
+                Locale locale = plugin.getLocale(c.getIssuer());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_TRAIT, locale));
             }
             return trait;
@@ -142,7 +143,7 @@ public class CommandRegistrar {
         }
     }
 
-    private void registerCompletions(PaperCommandManager manager) {
+    private void registerCompletions(SpongeCommandManager manager) {
         var completions = manager.getCommandCompletions();
         completions.registerAsyncCompletion("skills", c -> {
             List<String> skills = new ArrayList<>();
@@ -217,7 +218,7 @@ public class CommandRegistrar {
         completions.registerAsyncCompletion("menu_names", c -> plugin.getSlate().getLoadedMenus().keySet());
     }
 
-    private void registerBaseCommands(PaperCommandManager manager) {
+    private void registerBaseCommands(SpongeCommandManager manager) {
         manager.registerCommand(new SkillsRootCommand(plugin));
         manager.registerCommand(new StatsCommand(plugin));
         manager.registerCommand(new SkillCommand(plugin));
@@ -237,7 +238,7 @@ public class CommandRegistrar {
         manager.registerCommand(new AntiAfkCommand(plugin));
     }
 
-    public void registerSkillCommands(PaperCommandManager manager) {
+    public void registerSkillCommands(SpongeCommandManager manager) {
         if (plugin.configBoolean(Option.ENABLE_SKILL_COMMANDS)) {
             Map<Skill, Boolean> map = plugin.getSkillManager().loadConfigEnabledMap();
             registerSkillCommand(new SkillCommands.FarmingCommand(plugin), map, manager);
@@ -258,7 +259,7 @@ public class CommandRegistrar {
         }
     }
     
-    private void registerSkillCommand(SkillCommands.SkillCommand command, Map<Skill, Boolean> enabled, PaperCommandManager manager) {
+    private void registerSkillCommand(SkillCommands.SkillCommand command, Map<Skill, Boolean> enabled, SpongeCommandManager manager) {
         if (enabled.getOrDefault(command.skill, false)) {
             manager.registerCommand(command);
         }
