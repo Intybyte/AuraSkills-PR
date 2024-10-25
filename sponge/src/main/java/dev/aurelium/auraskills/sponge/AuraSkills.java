@@ -69,6 +69,7 @@ import dev.aurelium.auraskills.sponge.trait.BukkitTraitManager;
 import dev.aurelium.auraskills.sponge.ui.BukkitUiProvider;
 import dev.aurelium.auraskills.sponge.user.BukkitUserManager;
 import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
@@ -77,11 +78,13 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.logging.log4j.Logger;
 import org.bstats.sponge.Metrics;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -111,6 +114,10 @@ public class AuraSkills implements AuraSkillsPlugin {
 
     private final PluginContainer container;
     private final Logger logger;
+
+    public PluginContainer container() {
+        return container;
+    }
 
     private AuraSkillsApi api;
     private ApiProvider apiProvider;
@@ -328,6 +335,11 @@ public class AuraSkills implements AuraSkillsPlugin {
         return levelManager;
     }
 
+    @NotNull
+    public User getUser(Player player) {
+        return userManager.getUser(player);
+    }
+
     @Override
     public UserManager getUserManager() {
         return userManager;
@@ -461,6 +473,14 @@ public class AuraSkills implements AuraSkillsPlugin {
     @Override
     public String getPrefix(Locale locale) {
         return messageProvider.get(CommandMessage.PREFIX, locale);
+    }
+
+    public <T extends Audience> Locale getLocale(T sender) {
+        if (sender instanceof Player player) {
+            return getUser(player).getLocale();
+        } else {
+            return messageProvider.getDefaultLanguage();
+        }
     }
 
     @Override

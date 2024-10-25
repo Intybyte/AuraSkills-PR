@@ -3,6 +3,7 @@ package dev.aurelium.auraskills.sponge.commands;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MinecraftMessageKeys;
+import co.aikar.commands.SpongeCommandExecutionContext;
 import co.aikar.commands.SpongeCommandManager;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
@@ -33,7 +34,7 @@ public class CommandRegistrar {
     }
 
     public SpongeCommandManager registerCommands() {
-        var manager = new SpongeCommandManager(plugin);
+        var manager = new SpongeCommandManager(plugin.container());
         manager.enableUnstableAPI("help");
         manager.usePerIssuerLocale(true);
         manager.getCommandReplacements().addReplacement("skills_alias", "skills|sk|skill");
@@ -75,7 +76,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Skill skill = plugin.getSkillRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (skill == null || !skill.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getIssuer());
+                Locale locale = plugin.getLocale(c.getSource());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_SKILL, locale));
             }
             return skill;
@@ -84,7 +85,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             ManaAbility manaAbility = plugin.getManaAbilityRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (manaAbility == null || !manaAbility.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getIssuer());
+                Locale locale = plugin.getLocale(c.getSource());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_MANA_ABILITY, locale));
             }
             return manaAbility;
@@ -93,7 +94,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Stat stat = plugin.getStatRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (stat == null || !stat.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getIssuer());
+                Locale locale = plugin.getLocale(c.getSource());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_STAT, locale));
             }
             return stat;
@@ -102,7 +103,7 @@ public class CommandRegistrar {
             String arg = c.popFirstArg();
             Trait trait = plugin.getTraitRegistry().getOrNull(NamespacedId.fromDefault(arg));
             if (trait == null || !trait.isEnabled()) {
-                Locale locale = plugin.getLocale(c.getIssuer());
+                Locale locale = plugin.getLocale(c.getSource());
                 throw new InvalidCommandArgument(plugin.getMsg(CommandMessage.UNKNOWN_TRAIT, locale));
             }
             return trait;
