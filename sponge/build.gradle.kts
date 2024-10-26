@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     implementation(project(":common"))
+    implementation(project(":api-sponge"))
     implementation("org.bstats:bstats-sponge:3.0.2")
     implementation("co.aikar:acf-sponge:0.5.1-SNAPSHOT")
 }

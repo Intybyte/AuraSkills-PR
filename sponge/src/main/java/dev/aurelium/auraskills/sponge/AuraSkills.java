@@ -3,6 +3,7 @@ package dev.aurelium.auraskills.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import dev.aurelium.auraskills.api.AuraSkillsApi;
+import dev.aurelium.auraskills.api.item.ItemManager;
 import dev.aurelium.auraskills.sponge.ability.BukkitAbilityManager;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
 import dev.aurelium.auraskills.common.ability.AbilityManager;
@@ -44,7 +45,7 @@ import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.user.UserManager;
 import dev.aurelium.auraskills.common.util.PlatformUtil;
 import dev.aurelium.auraskills.sponge.antiafk.AntiAfkManager;
-import dev.aurelium.auraskills.sponge.api.implementation.BukkitApiProvider;
+import dev.aurelium.auraskills.sponge.api.implementation.SpongeApiProvider;
 import dev.aurelium.auraskills.sponge.commands.CommandRegistrar;
 import dev.aurelium.auraskills.sponge.commands.ConfirmManager;
 import dev.aurelium.auraskills.sponge.config.BukkitConfigProvider;
@@ -69,6 +70,7 @@ import dev.aurelium.auraskills.sponge.trait.BukkitTraitManager;
 import dev.aurelium.auraskills.sponge.ui.BukkitUiProvider;
 import dev.aurelium.auraskills.sponge.user.BukkitUserManager;
 import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
+import dev.aurelium.slate.inv.InventoryManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -178,7 +180,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         
         // Register the API
         this.api = new ApiAuraSkills(this);
-        this.apiProvider = new BukkitApiProvider(this);
+        this.apiProvider = new SpongeApiProvider(this);
         ApiRegistrationUtil.register(api);
         this.itemManager = new ApiItemManager(this); // Needed in ApiAuraSkillsBukkit
 
