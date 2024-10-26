@@ -17,24 +17,9 @@ import dev.aurelium.slate.position.FixedPosition;
 import dev.aurelium.slate.position.GroupPosition;
 import dev.aurelium.slate.position.PositionProvider;
 import dev.aurelium.slate.util.SkullCreator;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -106,8 +91,6 @@ public class ConfigurateItemParser {
             parseAmount(item, config);
         }
 
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
         // Enchantments
         if (config.hasChild("enchantments") && !excludedKeys.contains("enchantments")) {
             parseEnchantments(item, config);
@@ -140,7 +123,7 @@ public class ConfigurateItemParser {
 
         ConfigurationNode skullMetaSection = config.node("skull_meta");
         if (!skullMetaSection.virtual() && !excludedKeys.contains("skull_meta")) {
-            parseSkullMeta(item, item.getItemMeta(), skullMetaSection);
+            parseSkullMeta(item, skullMetaSection);
         }
         return item;
     }
@@ -398,7 +381,7 @@ public class ConfigurateItemParser {
         return Material.getMaterial(name);
     }
 
-    private void parseSkullMeta(ItemStack item, ItemMeta meta, ConfigurationNode section) {
+    private void parseSkullMeta(ItemStack item, ConfigurationNode section) {
         if (!(meta instanceof SkullMeta skullMeta)) {
             return;
         }
