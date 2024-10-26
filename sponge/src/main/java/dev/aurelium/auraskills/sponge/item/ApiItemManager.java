@@ -14,7 +14,7 @@ import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.item.SkillsItem.MetaType;
 import dev.aurelium.auraskills.sponge.util.ConfigurateItemParser;
 import dev.aurelium.auraskills.common.api.implementation.ApiConfigNode;
-import org.bukkit.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 

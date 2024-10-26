@@ -561,4 +561,9 @@ public class AuraSkills implements AuraSkillsPlugin {
     public File getPluginFolder() {
         return dataFolder;
     }
+
+    //this should be added to the main interface
+    public LootTableManager getLootTableManager() {
+        return lootTableManager;
+    }
 }

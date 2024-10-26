@@ -10,7 +10,7 @@ import dev.aurelium.auraskills.api.stat.Stats;
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.trait.TraitModifier;
 import dev.aurelium.auraskills.api.trait.Traits;
-import org.bukkit.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;

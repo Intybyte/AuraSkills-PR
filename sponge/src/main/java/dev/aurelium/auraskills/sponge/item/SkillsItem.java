@@ -22,14 +22,8 @@ import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.message.type.CommandMessage;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.text.TextUtil;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.*;
 
@@ -40,7 +34,7 @@ public class SkillsItem {
     private final ItemMeta meta;
 
     public SkillsItem(ItemStack item, AuraSkills plugin) {
-        this.item = item.clone();
+        this.item = item.copy();
         this.meta = this.item.getItemMeta();
         this.plugin = plugin;
     }

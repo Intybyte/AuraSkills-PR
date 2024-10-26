@@ -4,6 +4,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("org.spongepowered.gradle.plugin") version "2.2.0"
 }
 
 repositories {
@@ -11,6 +12,10 @@ repositories {
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     maven("https://jitpack.io")
+    maven {
+        name = "SpongePowered"
+        url = uri("https://repo.spongepowered.org/repository/maven-public/")
+    }
 }
 
 dependencies {
@@ -21,6 +26,7 @@ dependencies {
     }
     // api(files("../../Slate/build/libs/Slate-1.1.8-all.jar"))
     compileOnly("org.jetbrains:annotations:24.1.0")
+    implementation("org.spongepowered:spongeapi:10.1.0-SNAPSHOT")
 }
 
 tasks.withType<JavaCompile> {
@@ -45,7 +51,7 @@ tasks {
 java {
     withJavadocJar()
     withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
