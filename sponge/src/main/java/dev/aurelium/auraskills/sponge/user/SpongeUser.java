@@ -195,6 +195,7 @@ public class SpongeUser extends User {
 
         final String prefix = "auraskills.jobs.block.";
 
+        //TODO: Understand better how permissions work in sponge in order to supply the correct stuff if possible and replace all the permissions loops
         for (var permission : player.subjectData().allPermissions().values() ) {
             for (var entry : permission.entrySet()) {
                 String permissionKey = entry.getKey();
