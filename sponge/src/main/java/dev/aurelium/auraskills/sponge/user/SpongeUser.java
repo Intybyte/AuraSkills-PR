@@ -13,7 +13,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.service.context.ContextService;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -23,6 +24,7 @@ public class SpongeUser extends User {
     @Nullable
     private final org.spongepowered.api.entity.living.player.User player;
     private final AuraSkills plugin;
+    private static final ContextService contextService = Sponge.server().serviceProvider().contextService();
     // Non-persistent data
     private final Map<CheckType, CheckData> checkData;
 
@@ -34,8 +36,9 @@ public class SpongeUser extends User {
     }
 
     @Nullable
-    public static Player getPlayer(SkillsUser skillsUser) {
-        return ((SpongeUser) ((ApiSkillsUser) skillsUser).getUser()).getPlayer();
+    public static ServerPlayer getPlayer(SkillsUser skillsUser) {
+        var skillUser = ((ApiSkillsUser) skillsUser).getUser();
+        return ((SpongeUser) (skillUser)).getPlayer();
     }
 
     public static SpongeUser getUser(SkillsUser skillsUser) {
@@ -48,8 +51,14 @@ public class SpongeUser extends User {
     }
 
     @Nullable
-    public org.spongepowered.api.entity.living.player.User getPlayer() {
-        return player;
+    public ServerPlayer getPlayer() {
+        if (player == null) {
+            return null;
+        }
+
+        var outPlayer = Sponge.server().player(player.uniqueId());
+        return outPlayer.orElse(null);
+
     }
 
     @Override
@@ -81,11 +90,12 @@ public class SpongeUser extends User {
             return multiplier;
         }
 
-        for (var permission : player.subjectData().allPermissions().values() ) {
-            for (var entry : permission.entrySet()) {
-                if (!entry.getValue()) continue;
-                multiplier += getMultiplierFromPermission(entry.getKey(), skill);
-            }
+
+        var context = contextService.contextsFor(player.contextCause());
+        var currentPermissions = player.transientSubjectData().permissions(context);
+        for (var entry : currentPermissions.entrySet()) {
+            if (!entry.getValue()) continue;
+            multiplier += getMultiplierFromPermission(entry.getKey(), skill);
         }
 
         return multiplier;
@@ -166,25 +176,27 @@ public class SpongeUser extends User {
         final String prefix = "auraskills.jobs.limit.";
         int highestLimit = 0;
 
-        for (var permission : player.subjectData().allPermissions().values() ) {
-            for (var entry : permission.entrySet()) {
-                String permissionKey = entry.getKey();
+        var context = contextService.contextsFor(player.contextCause());
+        var currentPermissions = player.transientSubjectData().permissions(context);
 
-                if (!permissionKey.startsWith(prefix)) continue;
+        for (var entry : currentPermissions.entrySet()) {
+            String permissionKey = entry.getKey();
 
-                permissionKey = permissionKey.substring(prefix.length());
+            if (!permissionKey.startsWith(prefix)) continue;
 
-                if (isNumeric(permissionKey)) {
-                    try {
-                        int value = Integer.parseInt(permissionKey);
-                        if (value > highestLimit) {
-                            highestLimit = value;
-                        }
-                    } catch (NumberFormatException ignored) {
+            permissionKey = permissionKey.substring(prefix.length());
+
+            if (isNumeric(permissionKey)) {
+                try {
+                    int value = Integer.parseInt(permissionKey);
+                    if (value > highestLimit) {
+                        highestLimit = value;
                     }
+                } catch (NumberFormatException ignored) {
                 }
             }
         }
+
 
         return highestLimit;
     }
@@ -195,18 +207,17 @@ public class SpongeUser extends User {
 
         final String prefix = "auraskills.jobs.block.";
 
-        //TODO: Understand better how permissions work in sponge in order to supply the correct stuff if possible and replace all the permissions loops
-        for (var permission : player.subjectData().allPermissions().values() ) {
-            for (var entry : permission.entrySet()) {
-                String permissionKey = entry.getKey();
+        var context = contextService.contextsFor(player.contextCause());
+        var currentPermissions = player.transientSubjectData().permissions(context);
+        for (var entry : currentPermissions.entrySet()) {
+            String permissionKey = entry.getKey();
 
-                if (!permissionKey.startsWith(prefix)) continue;
+            if (!permissionKey.startsWith(prefix)) continue;
 
-                String skillName = permissionKey.substring(prefix.length());
-                if (skillName.equals(skill.getId().getKey()) || skillName.equals(skill.getId().toString())) {
-                    if (entry.getValue()) { // If permission is true, selection is blocked
-                        return false;
-                    }
+            String skillName = permissionKey.substring(prefix.length());
+            if (skillName.equals(skill.getId().getKey()) || skillName.equals(skill.getId().toString())) {
+                if (entry.getValue()) { // If permission is true, selection is blocked
+                    return false;
                 }
             }
         }
