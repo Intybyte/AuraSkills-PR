@@ -7,7 +7,7 @@ import dev.aurelium.auraskills.api.source.XpSource;
 import dev.aurelium.auraskills.api.source.type.DamageXpSource.DamageCause;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.source.*;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.level.LevelManager;
 import dev.aurelium.auraskills.common.user.User;
@@ -78,7 +78,7 @@ public class BukkitLevelManager extends LevelManager {
 
         double amountToAdd = amount * calculateMultiplier(user, skill);
 
-        EntityXpGainEvent event = new EntityXpGainEvent(BukkitUser.getPlayer(user.toApi()), user.toApi(), skill, source, amountToAdd, attacked, damager, originalEvent);
+        EntityXpGainEvent event = new EntityXpGainEvent(SpongeUser.getPlayer(user.toApi()), user.toApi(), skill, source, amountToAdd, attacked, damager, originalEvent);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
@@ -91,7 +91,7 @@ public class BukkitLevelManager extends LevelManager {
 
         double amountToAdd = amount * calculateMultiplier(user, skill);
 
-        DamageXpGainEvent event = new DamageXpGainEvent(BukkitUser.getPlayer(user.toApi()), user.toApi(), skill, source, amountToAdd, cause, damager, originalEvent);
+        DamageXpGainEvent event = new DamageXpGainEvent(SpongeUser.getPlayer(user.toApi()), user.toApi(), skill, source, amountToAdd, cause, damager, originalEvent);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
@@ -100,7 +100,7 @@ public class BukkitLevelManager extends LevelManager {
 
     @Override
     public void playLevelUpSound(@NotNull User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
         try {
             player.playSound(player.getLocation(), Sound.valueOf(plugin.configString(Option.LEVELER_SOUND_TYPE))
@@ -114,7 +114,7 @@ public class BukkitLevelManager extends LevelManager {
 
     @Override
     public void reloadModifiers(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             plugin.getModifierManager().reloadPlayer(player);
         }

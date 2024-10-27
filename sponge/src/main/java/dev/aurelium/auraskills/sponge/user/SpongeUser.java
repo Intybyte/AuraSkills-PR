@@ -10,23 +10,23 @@ import dev.aurelium.auraskills.sponge.skills.agility.AgilityAbilities;
 import dev.aurelium.auraskills.common.api.implementation.ApiSkillsUser;
 import dev.aurelium.auraskills.common.user.User;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
-public class BukkitUser extends User {
+public class SpongeUser extends User {
 
     @Nullable
-    private final Player player;
+    private final org.spongepowered.api.entity.living.player.User player;
     private final AuraSkills plugin;
     // Non-persistent data
     private final Map<CheckType, CheckData> checkData;
 
-    public BukkitUser(UUID uuid, @Nullable Player player, AuraSkills plugin) {
+    public SpongeUser(UUID uuid, @Nullable org.spongepowered.api.entity.living.player.User player, AuraSkills plugin) {
         super(uuid, plugin);
         this.player = player;
         this.plugin = plugin;
@@ -35,11 +35,11 @@ public class BukkitUser extends User {
 
     @Nullable
     public static Player getPlayer(SkillsUser skillsUser) {
-        return ((BukkitUser) ((ApiSkillsUser) skillsUser).getUser()).getPlayer();
+        return ((SpongeUser) ((ApiSkillsUser) skillsUser).getUser()).getPlayer();
     }
 
-    public static BukkitUser getUser(SkillsUser skillsUser) {
-        return (BukkitUser) ((ApiSkillsUser) skillsUser).getUser();
+    public static SpongeUser getUser(SkillsUser skillsUser) {
+        return (SpongeUser) ((ApiSkillsUser) skillsUser).getUser();
     }
 
     @NotNull
@@ -48,14 +48,21 @@ public class BukkitUser extends User {
     }
 
     @Nullable
-    public Player getPlayer() {
+    public org.spongepowered.api.entity.living.player.User getPlayer() {
         return player;
     }
 
     @Override
     public String getUsername() {
-        String name = Bukkit.getOfflinePlayer(uuid).getName();
-        return name != null ? name : "?";
+        try {
+            var user = Sponge.server().userManager().load(uuid).get();
+            if(user.isPresent()) {
+                return user.get().name();
+            }
+            return null;
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
     }
 
     @Override
@@ -72,10 +79,12 @@ public class BukkitUser extends User {
                 multiplier += getMultiplierFromPermission(permission, skill);
             }
             return multiplier;
-        } else {
-            for (PermissionAttachmentInfo permission : player.getEffectivePermissions()) {
-                if (!permission.getValue()) continue;
-                multiplier += getMultiplierFromPermission(permission.getPermission(), skill);
+        }
+
+        for (var permission : player.subjectData().allPermissions().values() ) {
+            for (var entry : permission.entrySet()) {
+                if (!entry.getValue()) continue;
+                multiplier += getMultiplierFromPermission(entry.getKey(), skill);
             }
         }
 
@@ -157,23 +166,26 @@ public class BukkitUser extends User {
         final String prefix = "auraskills.jobs.limit.";
         int highestLimit = 0;
 
-        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
-            String permission = permissionInfo.getPermission();
+        for (var permission : player.subjectData().allPermissions().values() ) {
+            for (var entry : permission.entrySet()) {
+                String permissionKey = entry.getKey();
 
-            if (!permission.startsWith(prefix)) continue;
+                if (!permissionKey.startsWith(prefix)) continue;
 
-            permission = permission.substring(prefix.length());
+                permissionKey = permissionKey.substring(prefix.length());
 
-            if (isNumeric(permission)) {
-                try {
-                    int value = Integer.parseInt(permission);
-                    if (value > highestLimit) {
-                        highestLimit = value;
+                if (isNumeric(permissionKey)) {
+                    try {
+                        int value = Integer.parseInt(permissionKey);
+                        if (value > highestLimit) {
+                            highestLimit = value;
+                        }
+                    } catch (NumberFormatException ignored) {
                     }
-                } catch (NumberFormatException ignored) {
                 }
             }
         }
+
         return highestLimit;
     }
 
@@ -183,18 +195,21 @@ public class BukkitUser extends User {
 
         final String prefix = "auraskills.jobs.block.";
 
-        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
-            String permission = permissionInfo.getPermission();
+        for (var permission : player.subjectData().allPermissions().values() ) {
+            for (var entry : permission.entrySet()) {
+                String permissionKey = entry.getKey();
 
-            if (!permission.startsWith(prefix)) continue;
+                if (!permissionKey.startsWith(prefix)) continue;
 
-            String skillName = permission.substring(prefix.length());
-            if (skillName.equals(skill.getId().getKey()) || skillName.equals(skill.getId().toString())) {
-                if (permissionInfo.getValue()) { // If permission is true, selection is blocked
-                    return false;
+                String skillName = permissionKey.substring(prefix.length());
+                if (skillName.equals(skill.getId().getKey()) || skillName.equals(skill.getId().toString())) {
+                    if (entry.getValue()) { // If permission is true, selection is blocked
+                        return false;
+                    }
                 }
             }
         }
+
         return true;
     }
 

@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.mana;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.event.mana.ManaAbilityRefreshEvent;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.mana.ManaAbilityData;
 import dev.aurelium.auraskills.common.scheduler.TaskRunnable;
@@ -69,7 +69,7 @@ public class TimerCountdown {
     }
 
     private void callRefreshEvent(User user, ManaAbility manaAbility) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             ManaAbilityRefreshEvent event = new ManaAbilityRefreshEvent(player, user.toApi(), manaAbility);
             Bukkit.getPluginManager().callEvent(event);

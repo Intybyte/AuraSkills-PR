@@ -2,7 +2,7 @@ package dev.aurelium.auraskills.sponge.listeners;
 
 import dev.aurelium.auraskills.api.event.user.UserLoadEvent;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.UpdateChecker;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.storage.sql.SqlStorageProvider;
@@ -78,7 +78,7 @@ public class PlayerJoinQuit implements Listener {
 
     @EventHandler
     public void onUserLoad(UserLoadEvent event) {
-        detectUserLanguage(BukkitUser.getUser(event.getUser()), event.getPlayer());
+        detectUserLanguage(SpongeUser.getUser(event.getUser()), event.getPlayer());
     }
 
     private void detectUserLanguage(User user, Player player) {

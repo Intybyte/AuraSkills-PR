@@ -13,7 +13,7 @@ import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.item.SkillsItem;
 import dev.aurelium.auraskills.sponge.skills.foraging.ForagingAbilities;
 import dev.aurelium.auraskills.sponge.skills.mining.MiningAbilities;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.ItemUtils;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.scheduler.TaskRunnable;
@@ -54,7 +54,7 @@ public class ItemListener implements Listener {
     @EventHandler
     public void onJoin(UserLoadEvent event) {
         Player player = event.getPlayer();
-        User user = BukkitUser.getUser(event.getUser());
+        User user = SpongeUser.getUser(event.getUser());
 
         // Remove legacy stored item modifiers
         List<String> toRemove = new ArrayList<>();

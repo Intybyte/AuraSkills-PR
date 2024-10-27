@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.hooks;
 
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.hooks.EconomyHook;
 import dev.aurelium.auraskills.common.hooks.Hook;
 import dev.aurelium.auraskills.common.user.User;
@@ -28,7 +28,7 @@ public class VaultHook extends EconomyHook {
 
     @Override
     public void deposit(User user, double amount) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null && economy != null) {
             economy.depositPlayer(player, amount);
         }

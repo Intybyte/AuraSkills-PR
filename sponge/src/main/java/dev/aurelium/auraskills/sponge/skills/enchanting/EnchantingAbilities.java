@@ -6,7 +6,7 @@ import dev.aurelium.auraskills.api.stat.Stats;
 import dev.aurelium.auraskills.api.event.skill.XpGainEvent;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.ability.AbilityImpl;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.VersionUtils;
 import dev.aurelium.auraskills.common.scheduler.TaskRunnable;
 import dev.aurelium.auraskills.common.user.User;
@@ -47,7 +47,7 @@ public class EnchantingAbilities extends AbilityImpl {
         
         if (failsChecks(player, ability)) return;
 
-        User user = BukkitUser.getUser(event.getUser());
+        User user = SpongeUser.getUser(event.getUser());
 
         if (!(event.getAmount() > 0)) return;
 

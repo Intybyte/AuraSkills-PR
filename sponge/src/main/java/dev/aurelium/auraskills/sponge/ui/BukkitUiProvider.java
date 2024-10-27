@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.ui;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.hooks.ProtocolLibHook;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.ui.ActionBarManager;
 import dev.aurelium.auraskills.common.ui.UiProvider;
 import dev.aurelium.auraskills.common.user.User;
@@ -53,7 +53,7 @@ public class BukkitUiProvider implements UiProvider {
     @Override
     @SuppressWarnings("deprecation")
     public void sendActionBar(User user, String message) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
 
         if (plugin.getHookManager().isRegistered(ProtocolLibHook.class)) {
@@ -66,14 +66,14 @@ public class BukkitUiProvider implements UiProvider {
 
     @Override
     public void sendXpBossBar(User user, Skill skill, double currentXp, double levelXp, double xpGained, int level, boolean maxed, double income) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
         bossBarManager.sendBossBar(player, skill, currentXp, levelXp, xpGained, level, maxed, income);
     }
 
     @Override
     public void sendTitle(User user, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        Player player = BukkitUser.getPlayer(user.toApi());
+        Player player = SpongeUser.getPlayer(user.toApi());
         if (player == null) return;
 
         Component cTitle = tf.toComponent(title);

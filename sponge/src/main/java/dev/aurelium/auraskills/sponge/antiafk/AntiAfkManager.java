@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.antiafk;
 import com.ezylang.evalex.Expression;
 import com.ezylang.evalex.parser.ParseException;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.message.type.CommandMessage;
 import dev.aurelium.auraskills.common.region.BlockPosition;
@@ -75,7 +75,7 @@ public class AntiAfkManager {
     }
 
     public CheckData getCheckData(Player player, CheckType type)  {
-        return ((BukkitUser) plugin.getUser(player)).getCheckData(type);
+        return ((SpongeUser) plugin.getUser(player)).getCheckData(type);
     }
 
     public Expression getLogThresholdExpression() {

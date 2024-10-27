@@ -6,7 +6,7 @@ import dev.aurelium.auraskills.api.stat.StatModifier;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.item.SkillsItem;
 import dev.aurelium.auraskills.api.skill.Multiplier;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.modifier.ModifierManager;
 import dev.aurelium.auraskills.common.user.User;
 import org.bukkit.Material;
@@ -106,7 +106,7 @@ public class BukkitModifierManager implements ModifierManager {
 
     @Override
     public void reloadUser(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             reloadPlayer(player);
         }

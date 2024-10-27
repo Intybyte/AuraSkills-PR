@@ -55,7 +55,7 @@ import dev.aurelium.auraskills.sponge.item.BukkitItemRegistry;
 import dev.aurelium.auraskills.sponge.level.BukkitLevelManager;
 import dev.aurelium.auraskills.sponge.logging.BukkitLogger;
 import dev.aurelium.auraskills.sponge.loot.LootTableManager;
-import dev.aurelium.auraskills.sponge.mana.BukkitManaAbilityManager;
+import dev.aurelium.auraskills.sponge.mana.SpongeManaAbilityManager;
 import dev.aurelium.auraskills.sponge.menus.MenuFileManager;
 import dev.aurelium.auraskills.sponge.message.BukkitMessageProvider;
 import dev.aurelium.auraskills.sponge.modifier.BukkitModifierManager;
@@ -124,7 +124,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private ApiProvider apiProvider;
     private SkillManager skillManager;
     private SpongeAbilityManager abilityManager;
-    private BukkitManaAbilityManager manaAbilityManager;
+    private SpongeManaAbilityManager manaAbilityManager;
     private StatManager statManager;
     private BukkitTraitManager traitManager;
     private SkillRegistry skillRegistry;
@@ -191,7 +191,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         // Init managers
         skillManager = new SkillManager(this);
         abilityManager = new SpongeAbilityManager(this);
-        manaAbilityManager = new BukkitManaAbilityManager(this);
+        manaAbilityManager = new SpongeManaAbilityManager(this);
         statManager = new BukkitStatManager(this);
         traitManager = new BukkitTraitManager(this);
 
@@ -564,5 +564,9 @@ public class AuraSkills implements AuraSkillsPlugin {
     //this should be added to the main interface
     public LootTableManager getLootTableManager() {
         return lootTableManager;
+    }
+
+    public SpongeCommandManager getCommandManager() {
+        return commandManager;
     }
 }

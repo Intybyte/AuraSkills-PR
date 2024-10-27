@@ -4,7 +4,7 @@ import dev.aurelium.auraskills.api.ability.Abilities;
 import dev.aurelium.auraskills.api.event.trait.CustomRegenEvent;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.ability.AbilityImpl;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.user.User;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -84,7 +84,7 @@ public class EnduranceAbilities extends AbilityImpl {
         if (event.isCancelled()) return;
 
         if (isDisabled(ability)) return;
-        Player player = BukkitUser.getPlayer(event.getUser());
+        Player player = SpongeUser.getPlayer(event.getUser());
         if (player == null) return;
 
         User user = plugin.getUser(player);

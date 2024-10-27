@@ -6,7 +6,7 @@ import dev.aurelium.auraskills.api.event.skill.XpGainEvent;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.ability.AbilityImpl;
 import dev.aurelium.auraskills.sponge.source.GrindstoneLeveler;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.CompatUtil;
 import dev.aurelium.auraskills.sponge.util.EnchantmentValue;
 import dev.aurelium.auraskills.sponge.util.GrindstoneEnchant;
@@ -184,7 +184,7 @@ public class ForgingAbilities extends AbilityImpl {
 
         if (failsChecks(player, ability)) return;
 
-        User user = BukkitUser.getUser(event.getUser());
+        User user = SpongeUser.getUser(event.getUser());
 
         if (rand.nextDouble() < getValue(ability, user) / 100) {
             // Get all the items that have mending

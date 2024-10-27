@@ -8,7 +8,7 @@ import dev.aurelium.auraskills.api.loot.Loot;
 import dev.aurelium.auraskills.api.loot.LootPool;
 import dev.aurelium.auraskills.api.loot.LootTable;
 import dev.aurelium.auraskills.sponge.loot.type.ItemLoot;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.ItemUtils;
 import dev.aurelium.auraskills.sponge.util.PotionUtil;
 import dev.aurelium.auraskills.common.item.ItemRegistry;
@@ -74,7 +74,7 @@ public class BukkitItemRegistry implements ItemRegistry {
 
     @Override
     public void giveItem(User user, NamespacedId key, int amount) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
 
         ItemStack item = getItem(key);

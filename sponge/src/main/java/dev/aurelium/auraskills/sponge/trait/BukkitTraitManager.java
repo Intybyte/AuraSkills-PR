@@ -5,7 +5,7 @@ import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.trait.TraitHandler;
 import dev.aurelium.auraskills.api.util.NumberUtil;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.trait.TraitManager;
 import dev.aurelium.auraskills.common.user.User;
 import org.bukkit.Bukkit;
@@ -73,7 +73,7 @@ public class BukkitTraitManager extends TraitManager {
 
     @Override
     public double getBaseLevel(User user, Trait trait) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return 0.0;
 
         BukkitTraitHandler traitImpl = getTraitImpl(trait);

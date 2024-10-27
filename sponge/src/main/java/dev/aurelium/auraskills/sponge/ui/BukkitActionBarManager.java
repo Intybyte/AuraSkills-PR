@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.ui;
 
 import dev.aurelium.auraskills.api.trait.Traits;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
 import dev.aurelium.auraskills.common.ui.ActionBarManager;
 import dev.aurelium.auraskills.common.ui.UiProvider;
@@ -20,7 +20,7 @@ public class BukkitActionBarManager extends ActionBarManager {
     @Override
     @NotNull
     public String getHp(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return "";
 
         return String.valueOf(Math.round(player.getHealth() * Traits.HP.optionDouble("action_bar_scaling", 1)));
@@ -29,7 +29,7 @@ public class BukkitActionBarManager extends ActionBarManager {
     @Override
     @NotNull
     public String getMaxHp(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return "";
 
         AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -42,7 +42,7 @@ public class BukkitActionBarManager extends ActionBarManager {
     @Override
     @NotNull
     public String getWorldName(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             return player.getWorld().getName();
         }

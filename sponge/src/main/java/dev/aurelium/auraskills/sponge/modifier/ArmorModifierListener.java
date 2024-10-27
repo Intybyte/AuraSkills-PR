@@ -8,7 +8,7 @@ import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.trait.TraitModifier;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.item.SkillsItem;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.armor.ArmorEquipEvent;
 import dev.aurelium.auraskills.sponge.util.armor.ArmorType;
 import dev.aurelium.auraskills.common.config.Option;
@@ -45,7 +45,7 @@ public class ArmorModifierListener implements Listener {
     @EventHandler
     public void onJoin(UserLoadEvent event) {
         Player player = event.getPlayer();
-        User user = BukkitUser.getUser(event.getUser());
+        User user = SpongeUser.getUser(event.getUser());
         for (ItemStack armor : player.getInventory().getArmorContents()) {
             if (armor == null) {
                 continue;

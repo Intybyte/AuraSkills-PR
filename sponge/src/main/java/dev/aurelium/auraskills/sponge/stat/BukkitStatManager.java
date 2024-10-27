@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.stat;
 import dev.aurelium.auraskills.api.stat.Stat;
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.sponge.trait.BukkitTraitManager;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
 import dev.aurelium.auraskills.common.stat.StatManager;
 import dev.aurelium.auraskills.common.user.User;
@@ -19,7 +19,7 @@ public class BukkitStatManager extends StatManager {
     @Override
     public void reloadPlayer(User user) {
         // Reload traits
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
 
         for (Trait trait : plugin.getTraitManager().getEnabledTraits()) {
@@ -44,7 +44,7 @@ public class BukkitStatManager extends StatManager {
     @Override
     public void reloadStat(User user, Stat stat) {
         if (!stat.isEnabled()) return;
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
         // Reload traits
         for (Trait trait : stat.getTraits()) {

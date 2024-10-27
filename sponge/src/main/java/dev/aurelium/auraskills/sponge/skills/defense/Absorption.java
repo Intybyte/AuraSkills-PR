@@ -6,7 +6,7 @@ import dev.aurelium.auraskills.api.event.user.UserLoadEvent;
 import dev.aurelium.auraskills.api.mana.ManaAbilities;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.mana.ReadiedManaAbility;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.sponge.util.CompatUtil;
 import dev.aurelium.auraskills.common.message.type.ManaAbilityMessage;
 import dev.aurelium.auraskills.common.user.User;
@@ -41,7 +41,7 @@ public class Absorption extends ReadiedManaAbility {
 
     @EventHandler
     public void onPlayerLoad(UserLoadEvent event) {
-        User user = BukkitUser.getUser(event.getUser());
+        User user = SpongeUser.getUser(event.getUser());
         // Remove the activated ability data if the player logged out when the ability was active
         if (!isActivated(user)) {
             user.getAbilityData(manaAbility).remove("activated");

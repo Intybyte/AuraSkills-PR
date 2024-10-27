@@ -6,7 +6,7 @@ import dev.aurelium.auraskills.api.event.skill.XpGainEvent;
 import dev.aurelium.auraskills.api.event.user.UserLoadEvent;
 import dev.aurelium.auraskills.api.source.XpSource;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.event.EventHandler;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.data.Pair;
@@ -24,7 +24,7 @@ public class BukkitEventHandler implements EventHandler {
 
     @Override
     public void callUserLoadEvent(User user) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             UserLoadEvent event = new UserLoadEvent(player, user.toApi());
             Bukkit.getPluginManager().callEvent(event);
@@ -33,7 +33,7 @@ public class BukkitEventHandler implements EventHandler {
 
     @Override
     public void callSkillLevelUpEvent(User user, Skill skill, int level) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             SkillLevelUpEvent event = new SkillLevelUpEvent(player, user.toApi(), skill, level);
             Bukkit.getPluginManager().callEvent(event);
@@ -42,7 +42,7 @@ public class BukkitEventHandler implements EventHandler {
 
     @Override
     public Pair<Boolean, Double> callXpGainEvent(User user, Skill skill, @Nullable XpSource source, double amount) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             XpGainEvent event = new XpGainEvent(player, user.toApi(), skill, source, amount);
             Bukkit.getPluginManager().callEvent(event);

@@ -60,7 +60,7 @@ public class BukkitUserManager implements UserManager {
     @Override
     public User createNewUser(UUID uuid) {
         @Nullable Player player = plugin.getServer().getPlayer(uuid);
-        User user = new BukkitUser(uuid, player, plugin);
+        User user = new SpongeUser(uuid, player, plugin);
         // Set all skills to level 1 for new players
         for (LoadedSkill loadedSkill : plugin.getSkillManager().getSkills()) {
             user.setSkillLevel(loadedSkill.skill(), plugin.config().getStartLevel());

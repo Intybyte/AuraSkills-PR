@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.hooks;
 
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.sponge.user.BukkitUser;
+import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.hooks.Hook;
 import dev.aurelium.auraskills.common.hooks.PlaceholderHook;
 import dev.aurelium.auraskills.common.user.User;
@@ -19,7 +19,7 @@ public class PlaceholderApiHook extends PlaceholderHook {
 
     @Override
     public String setPlaceholders(User user, String message) {
-        Player player = ((BukkitUser) user).getPlayer();
+        Player player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             return PlaceholderAPI.setPlaceholders(player, message);
         } else {
