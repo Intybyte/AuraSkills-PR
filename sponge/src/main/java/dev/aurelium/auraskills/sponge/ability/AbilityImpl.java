@@ -4,14 +4,13 @@ import dev.aurelium.auraskills.api.ability.Ability;
 import dev.aurelium.auraskills.api.ability.AbilityContext;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.common.user.User;
-import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class AbilityImpl extends AbilityContext implements Listener {
+public class AbilityImpl extends AbilityContext {
 
     protected final AuraSkills plugin;
     protected final Random rand = new Random();
@@ -38,5 +37,4 @@ public class AbilityImpl extends AbilityContext implements Listener {
     protected double getSecondaryValue(Ability ability, User user) {
         return ability.getSecondaryValue(user.getAbilityLevel(ability));
     }
-
 }

@@ -19,19 +19,21 @@ import dev.aurelium.auraskills.sponge.skills.mining.MiningAbilities;
 import dev.aurelium.auraskills.common.ability.AbilityManager;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class BukkitAbilityManager extends AbilityManager {
+import static net.kyori.adventure.text.Component.text;
+
+public class SpongeAbilityManager extends AbilityManager {
 
     private final AuraSkills plugin;
     private final Map<Class<?>, AbilityImpl> abilityImpls = new HashMap<>();
 
-    public BukkitAbilityManager(AuraSkills plugin) {
+    public SpongeAbilityManager(AuraSkills plugin) {
         super(plugin);
         this.plugin = plugin;
     }
@@ -55,7 +57,7 @@ public class BukkitAbilityManager extends AbilityManager {
 
     public void registerAbilityImpl(AbilityImpl abilityImpl) {
         abilityImpls.put(abilityImpl.getClass(), abilityImpl);
-        Bukkit.getPluginManager().registerEvents(abilityImpl, plugin);
+        Sponge.eventManager().registerListeners(plugin.container(), abilityImpl);
     }
 
     public <T extends AbilityImpl> T getAbilityImpl(Class<T> clazz) {
@@ -82,7 +84,7 @@ public class BukkitAbilityManager extends AbilityManager {
             plugin.getUiProvider().getActionBarManager().sendAbilityActionBar(user, message);
         } else {
             if (message == null || message.isEmpty()) return; // Don't send empty message
-            player.sendMessage(plugin.getPrefix(user.getLocale()) + message);
+            player.sendMessage(text(plugin.getPrefix(user.getLocale()) + message));
         }
     }
 

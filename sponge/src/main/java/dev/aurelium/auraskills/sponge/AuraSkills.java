@@ -4,9 +4,8 @@ import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import dev.aurelium.auraskills.api.AuraSkillsApi;
 import dev.aurelium.auraskills.api.item.ItemManager;
-import dev.aurelium.auraskills.sponge.ability.BukkitAbilityManager;
+import dev.aurelium.auraskills.sponge.ability.SpongeAbilityManager;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
-import dev.aurelium.auraskills.common.ability.AbilityManager;
 import dev.aurelium.auraskills.common.ability.AbilityRegistry;
 import dev.aurelium.auraskills.common.api.ApiAuraSkills;
 import dev.aurelium.auraskills.common.api.ApiRegistrationUtil;
@@ -124,7 +123,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private AuraSkillsApi api;
     private ApiProvider apiProvider;
     private SkillManager skillManager;
-    private BukkitAbilityManager abilityManager;
+    private SpongeAbilityManager abilityManager;
     private BukkitManaAbilityManager manaAbilityManager;
     private StatManager statManager;
     private BukkitTraitManager traitManager;
@@ -191,7 +190,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         messageProvider.loadMessages();
         // Init managers
         skillManager = new SkillManager(this);
-        abilityManager = new BukkitAbilityManager(this);
+        abilityManager = new SpongeAbilityManager(this);
         manaAbilityManager = new BukkitManaAbilityManager(this);
         statManager = new BukkitStatManager(this);
         traitManager = new BukkitTraitManager(this);
@@ -313,7 +312,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @Override
-    public AbilityManager getAbilityManager() {
+    public SpongeAbilityManager getAbilityManager() {
         return abilityManager;
     }
 
