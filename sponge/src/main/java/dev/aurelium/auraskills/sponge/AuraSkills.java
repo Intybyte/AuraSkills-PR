@@ -178,7 +178,6 @@ public class AuraSkills implements AuraSkillsPlugin {
     @Listener
     public void onConstructPlugin(final ConstructPluginEvent event) {
         this.logger.info("Constructing auraskills");
-        SpongeAudiences.create(container, Sponge.game());
         
         // Register the API
         this.api = new ApiAuraSkills(this);
