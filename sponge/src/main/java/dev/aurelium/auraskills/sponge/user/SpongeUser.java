@@ -22,7 +22,9 @@ import java.util.concurrent.ExecutionException;
 public class SpongeUser extends User {
 
     @Nullable
-    private final org.spongepowered.api.entity.living.player.User player;
+    private final org.spongepowered.api.entity.living.player.User userStorage;
+    @Nullable
+    private final ServerPlayer player;
     private final AuraSkills plugin;
     private static final ContextService contextService = Sponge.server().serviceProvider().contextService();
     // Non-persistent data
@@ -30,7 +32,15 @@ public class SpongeUser extends User {
 
     public SpongeUser(UUID uuid, @Nullable org.spongepowered.api.entity.living.player.User player, AuraSkills plugin) {
         super(uuid, plugin);
-        this.player = player;
+        this.userStorage = player;
+
+        if (userStorage != null) {
+            var verboseBs = userStorage.player();
+            this.player = verboseBs.orElse(null);
+        } else {
+            this.player = null;
+        }
+
         this.plugin = plugin;
         this.checkData = new HashMap<>();
     }
@@ -52,11 +62,11 @@ public class SpongeUser extends User {
 
     @Nullable
     public ServerPlayer getPlayer() {
-        if (player == null) {
+        if (userStorage == null) {
             return null;
         }
 
-        var outPlayer = Sponge.server().player(player.uniqueId());
+        var outPlayer = Sponge.server().player(userStorage.uniqueId());
         return outPlayer.orElse(null);
 
     }
@@ -76,14 +86,14 @@ public class SpongeUser extends User {
 
     @Override
     public double getPermissionMultiplier(@Nullable Skill skill) {
-        if (player == null) {
+        if (userStorage == null) {
             return 0.0;
         }
         double multiplier = 0.0;
 
         if (plugin.getHookManager().isRegistered(SpongeLuckPermsHook.class)
                 && plugin.getHookManager().getHook(SpongeLuckPermsHook.class).usePermissionCache()) {
-            Set<String> permissions = plugin.getHookManager().getHook(SpongeLuckPermsHook.class).getMultiplierPermissions(player);
+            Set<String> permissions = plugin.getHookManager().getHook(SpongeLuckPermsHook.class).getMultiplierPermissions(userStorage);
             for (String permission : permissions) {
                 multiplier += getMultiplierFromPermission(permission, skill);
             }
@@ -91,8 +101,8 @@ public class SpongeUser extends User {
         }
 
 
-        var context = contextService.contextsFor(player.contextCause());
-        var currentPermissions = player.transientSubjectData().permissions(context);
+        var context = contextService.contextsFor(userStorage.contextCause());
+        var currentPermissions = userStorage.transientSubjectData().permissions(context);
         for (var entry : currentPermissions.entrySet()) {
             if (!entry.getValue()) continue;
             multiplier += getMultiplierFromPermission(entry.getKey(), skill);
@@ -157,27 +167,27 @@ public class SpongeUser extends User {
 
     @Override
     public boolean hasSkillPermission(Skill skill) {
-        if (player == null) return true;
+        if (userStorage == null) return true;
 
-        return player.hasPermission("auraskills.skill." + skill.name().toLowerCase(Locale.ROOT));
+        return userStorage.hasPermission("auraskills.skill." + skill.name().toLowerCase(Locale.ROOT));
     }
 
     @Override
     public void setCommandLocale(Locale locale) {
-        if (player != null) {
-            plugin.getCommandManager().setPlayerLocale(player, locale);
+        if (userStorage != null) {
+            plugin.getCommandManager().setPlayerLocale(userStorage, locale);
         }
     }
 
     @Override
     public int getPermissionJobLimit() {
-        if (player == null) return 0;
+        if (userStorage == null) return 0;
 
         final String prefix = "auraskills.jobs.limit.";
         int highestLimit = 0;
 
-        var context = contextService.contextsFor(player.contextCause());
-        var currentPermissions = player.transientSubjectData().permissions(context);
+        var context = contextService.contextsFor(userStorage.contextCause());
+        var currentPermissions = userStorage.transientSubjectData().permissions(context);
 
         for (var entry : currentPermissions.entrySet()) {
             String permissionKey = entry.getKey();
@@ -203,12 +213,12 @@ public class SpongeUser extends User {
 
     @Override
     public boolean canSelectJob(@NotNull Skill skill) {
-        if (player == null) return true;
+        if (userStorage == null) return true;
 
         final String prefix = "auraskills.jobs.block.";
 
-        var context = contextService.contextsFor(player.contextCause());
-        var currentPermissions = player.transientSubjectData().permissions(context);
+        var context = contextService.contextsFor(userStorage.contextCause());
+        var currentPermissions = userStorage.transientSubjectData().permissions(context);
         for (var entry : currentPermissions.entrySet()) {
             String permissionKey = entry.getKey();
 
@@ -232,7 +242,7 @@ public class SpongeUser extends User {
             return;
         }
         if (player != null) {
-            plugin.getAudiences().player(player).sendMessage(component);
+            player.sendMessage(component);
         }
     }
 
@@ -242,4 +252,18 @@ public class SpongeUser extends User {
         // Remove fleeting
         removeTraitModifier(AgilityAbilities.FLEETING_ID);
     }
+
+    //TODO: Update those to method Command Manager as you can't set locale as it is resolved on call.
+    @Override
+    public Locale getLocale() {
+        return locale != null ? locale : plugin.getMessageProvider().getDefaultLanguage();
+    }
+
+    @Override
+    public boolean hasLocale() {
+        return true;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {}
 }

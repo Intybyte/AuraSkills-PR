@@ -72,6 +72,8 @@ import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
 import dev.aurelium.slate.inv.InventoryManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.platform.spongeapi.SpongeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -176,6 +178,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     @Listener
     public void onConstructPlugin(final ConstructPluginEvent event) {
         this.logger.info("Constructing auraskills");
+        SpongeAudiences.create(container, Sponge.game());
         
         // Register the API
         this.api = new ApiAuraSkills(this);
