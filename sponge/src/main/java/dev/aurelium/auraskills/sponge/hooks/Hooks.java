@@ -7,7 +7,7 @@ public enum Hooks {
 
     DECENT_HOLOGRAMS(DecentHologramsHook.class, "DecentHolograms"),
     HOLOGRAPHIC_DISPLAYS(HolographicDisplaysHook.class, "HolographicDisplays"),
-    LUCK_PERMS(BukkitLuckPermsHook.class, "LuckPerms"),
+    LUCK_PERMS(SpongeLuckPermsHook.class, "LuckPerms"),
     PLACEHOLDER_API(PlaceholderApiHook.class, "PlaceholderAPI"),
     PROTOCOL_LIB(ProtocolLibHook.class, "ProtocolLib"),
     SLIMEFUN(SlimefunHook.class, "Slimefun"),

@@ -14,13 +14,7 @@ import net.luckperms.api.node.types.PermissionNode;
 import net.luckperms.api.query.Flag;
 import net.luckperms.api.query.QueryMode;
 import net.luckperms.api.query.QueryOptions;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.*;
@@ -28,13 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class BukkitLuckPermsHook extends LuckPermsHook implements Listener {
+public class SpongeLuckPermsHook extends LuckPermsHook {
 
     private final String prefix = "auraskills.multiplier.";
     private final Map<UUID, Set<String>> permissionCache = new ConcurrentHashMap<>();
     private final boolean usePermissionCache;
 
-    public BukkitLuckPermsHook(AuraSkillsPlugin plugin, ConfigurationNode config) {
+    public SpongeLuckPermsHook(AuraSkillsPlugin plugin, ConfigurationNode config) {
         super(plugin, config);
 
         this.usePermissionCache = config.node("use_permission_cache").getBoolean(true);
@@ -63,11 +57,11 @@ public class BukkitLuckPermsHook extends LuckPermsHook implements Listener {
         if (target instanceof User user) {
             plugin.getScheduler().scheduleAsync(
                     () -> {
-                        Player player = Bukkit.getPlayer(user.getUniqueId());
-                        // In case if someone logs out in that 500 ms timeframe
-                        if (player == null || !player.isOnline()) return;
-                        permissionCache.put(user.getUniqueId(), getMultiplierPermissions(user.getUniqueId()));
-                    },
+                            var uuid = user.getUniqueId();
+                            if (checkUUID(uuid)) {
+                                permissionCache.put(uuid, getMultiplierPermissions(uuid));
+                            }
+                        },
                     500,
                     TimeUnit.MILLISECONDS
             );
@@ -93,29 +87,33 @@ public class BukkitLuckPermsHook extends LuckPermsHook implements Listener {
 
             plugin.getScheduler().scheduleAsync(() -> {
                 for (UUID uuid : affectedPlayers) {
-                    Player player = Bukkit.getPlayer(uuid);
-                    // In case if someone logs out in that 500 ms timeframe
-                    if (player == null || !player.isOnline()) continue;
+                    if (checkUUID(uuid)) {
+                        permissionCache.put(uuid, getMultiplierPermissions(uuid));
+                    }
                     permissionCache.put(uuid, getMultiplierPermissions(uuid));
                 }
             }, 500, TimeUnit.MILLISECONDS);
         }
     }
 
-    public Set<String> getMultiplierPermissions(Player player) {
-        return permissionCache.computeIfAbsent(player.getUniqueId(), this::getMultiplierPermissions);
+    public Set<String> getMultiplierPermissions(org.spongepowered.api.entity.living.player.User player) {
+        return permissionCache.computeIfAbsent(player.uniqueId(), this::getMultiplierPermissions);
     }
 
     private Set<String> getMultiplierPermissions(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
+        var userOptional = getUser(uuid);
+        if (userOptional.isEmpty()) {
             return new HashSet<>();
         }
 
-        return player.getEffectivePermissions()
+        var user = userOptional.get();
+
+        var context = Sponge.server().serviceProvider().contextService().contextsFor(user.contextCause());
+        var currentPermissions = user.transientSubjectData().permissions(context);
+        return currentPermissions.entrySet()
                 .stream()
-                .filter(PermissionAttachmentInfo::getValue)
-                .map(PermissionAttachmentInfo::getPermission)
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
                 .filter(p -> p.startsWith(prefix))
                 .collect(Collectors.toSet());
     }
@@ -137,6 +135,25 @@ public class BukkitLuckPermsHook extends LuckPermsHook implements Listener {
 
     @Override
     public Class<? extends Hook> getTypeClass() {
-        return BukkitLuckPermsHook.class;
+        return SpongeLuckPermsHook.class;
+    }
+
+    private Optional<org.spongepowered.api.entity.living.player.User> getUser(UUID uuid) {
+        var userFuture = Sponge.server().userManager().load(uuid);
+        try {
+            return userFuture.get();
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+    }
+
+    private boolean checkUUID(UUID uuid) {
+        var optionalUser = getUser(uuid);
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
+
+        var user = optionalUser.get();
+        return user.isOnline();
     }
 }

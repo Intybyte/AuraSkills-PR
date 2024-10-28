@@ -5,7 +5,7 @@ import dev.aurelium.auraskills.api.user.SkillsUser;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.antiafk.CheckData;
 import dev.aurelium.auraskills.sponge.antiafk.CheckType;
-import dev.aurelium.auraskills.sponge.hooks.BukkitLuckPermsHook;
+import dev.aurelium.auraskills.sponge.hooks.SpongeLuckPermsHook;
 import dev.aurelium.auraskills.sponge.skills.agility.AgilityAbilities;
 import dev.aurelium.auraskills.common.api.implementation.ApiSkillsUser;
 import dev.aurelium.auraskills.common.user.User;
@@ -81,9 +81,9 @@ public class SpongeUser extends User {
         }
         double multiplier = 0.0;
 
-        if (plugin.getHookManager().isRegistered(BukkitLuckPermsHook.class)
-                && plugin.getHookManager().getHook(BukkitLuckPermsHook.class).usePermissionCache()) {
-            Set<String> permissions = plugin.getHookManager().getHook(BukkitLuckPermsHook.class).getMultiplierPermissions(player);
+        if (plugin.getHookManager().isRegistered(SpongeLuckPermsHook.class)
+                && plugin.getHookManager().getHook(SpongeLuckPermsHook.class).usePermissionCache()) {
+            Set<String> permissions = plugin.getHookManager().getHook(SpongeLuckPermsHook.class).getMultiplierPermissions(player);
             for (String permission : permissions) {
                 multiplier += getMultiplierFromPermission(permission, skill);
             }

@@ -26,6 +26,7 @@ dependencies {
     implementation("org.bstats:bstats-sponge:3.0.2")
     implementation("co.aikar:acf-sponge:0.5.1-SNAPSHOT")
     implementation("de.tr7zw:item-nbt-api:2.13.2")
+    compileOnly("net.luckperms:api:5.4")
 }
 
 sponge {
