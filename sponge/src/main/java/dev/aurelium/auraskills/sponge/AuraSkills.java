@@ -47,7 +47,7 @@ import dev.aurelium.auraskills.sponge.antiafk.AntiAfkManager;
 import dev.aurelium.auraskills.sponge.api.implementation.SpongeApiProvider;
 import dev.aurelium.auraskills.sponge.commands.CommandRegistrar;
 import dev.aurelium.auraskills.sponge.commands.ConfirmManager;
-import dev.aurelium.auraskills.sponge.config.BukkitConfigProvider;
+import dev.aurelium.auraskills.sponge.config.SpongeConfigProvider;
 import dev.aurelium.auraskills.sponge.event.BukkitEventHandler;
 import dev.aurelium.auraskills.sponge.hooks.WorldGuardFlags;
 import dev.aurelium.auraskills.sponge.item.ApiItemManager;
@@ -137,7 +137,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private BukkitItemRegistry itemRegistry;
     private PlatformLogger platformLogger;
     private SpongeMessageProvider messageProvider;
-    private BukkitConfigProvider configProvider;
+    private SpongeConfigProvider configProvider;
     private BukkitLevelManager levelManager;
     private BukkitUserManager userManager;
     private XpRequirements xpRequirements;
@@ -219,7 +219,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         MigrationManager migrationManager = new MigrationManager(this);
         migrationManager.attemptConfigMigration();
         // Load config.yml file
-        configProvider = new BukkitConfigProvider(this);
+        configProvider = new SpongeConfigProvider(this);
         configProvider.loadOptions(); // Also loads external plugin hooks
         initializeNbtApi();
         initializeMenus(); // Generate menu files

@@ -8,7 +8,7 @@ import dev.aurelium.auraskills.common.hooks.EconomyHook;
 import dev.aurelium.auraskills.common.message.PlatformLogger;
 import dev.aurelium.auraskills.common.skill.LoadedSkill;
 import dev.aurelium.auraskills.common.util.file.FileUtil;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class BukkitConfigProvider implements ConfigProvider {
+public class SpongeConfigProvider implements ConfigProvider {
 
     private final AuraSkills plugin;
     private final Map<Option, OptionValue> options = new HashMap<>();
 
-    public BukkitConfigProvider(AuraSkills plugin) {
+    public SpongeConfigProvider(AuraSkills plugin) {
         this.plugin = plugin;
     }
 
@@ -67,7 +67,8 @@ public class BukkitConfigProvider implements ConfigProvider {
                     options.put(option, new OptionValue(value));
                     loaded++;
                 } else if (value instanceof String && option.getType() == OptionType.COLOR) {
-                    options.put(option, new OptionValue(ChatColor.valueOf(String.valueOf(value).toUpperCase(Locale.ROOT))));
+                    String string = String.valueOf(value).toUpperCase(Locale.ROOT);
+                    options.put(option, new OptionValue(NamedTextColor.NAMES.value(string)));
                     loaded++;
                 } else {
                     logger.warn("Incorrect type in config.yml: Option " + option.name() + " with path " + option.getPath() + " should be of type " + option.getType().name() + ", using default value instead!");
