@@ -2,7 +2,7 @@ package dev.aurelium.auraskills.sponge.message;
 
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.MinecraftMessageKeys;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.SpongeCommandManager;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.common.message.MessageProvider;
 import dev.aurelium.auraskills.common.message.type.ACFCoreMessage;
@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class BukkitMessageProvider extends MessageProvider {
+public class SpongeMessageProvider extends MessageProvider {
 
     private final TextFormatter textFormatter = new TextFormatter();
 
-    public BukkitMessageProvider(AuraSkills plugin) {
+    public SpongeMessageProvider(AuraSkills plugin) {
         super(plugin);
     }
 
@@ -36,7 +36,7 @@ public class BukkitMessageProvider extends MessageProvider {
         return textFormatter.toComponent(message);
     }
 
-    public void setACFMessages(@NotNull PaperCommandManager commandManager) {
+    public void setACFMessages(@NotNull SpongeCommandManager commandManager) {
         for (Locale locale : manager.getLoadedLanguages()) {
             for (ACFCoreMessage key : ACFCoreMessage.values()) {
                 String configMsg = get(key, locale);

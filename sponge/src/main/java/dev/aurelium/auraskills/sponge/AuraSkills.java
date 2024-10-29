@@ -57,7 +57,7 @@ import dev.aurelium.auraskills.sponge.logging.BukkitLogger;
 import dev.aurelium.auraskills.sponge.loot.LootTableManager;
 import dev.aurelium.auraskills.sponge.mana.SpongeManaAbilityManager;
 import dev.aurelium.auraskills.sponge.menus.MenuFileManager;
-import dev.aurelium.auraskills.sponge.message.BukkitMessageProvider;
+import dev.aurelium.auraskills.sponge.message.SpongeMessageProvider;
 import dev.aurelium.auraskills.sponge.modifier.BukkitModifierManager;
 import dev.aurelium.auraskills.sponge.region.BukkitRegionManager;
 import dev.aurelium.auraskills.sponge.region.BukkitWorldManager;
@@ -136,7 +136,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private SourceTypeRegistry sourceTypeRegistry;
     private BukkitItemRegistry itemRegistry;
     private PlatformLogger platformLogger;
-    private BukkitMessageProvider messageProvider;
+    private SpongeMessageProvider messageProvider;
     private BukkitConfigProvider configProvider;
     private BukkitLevelManager levelManager;
     private BukkitUserManager userManager;
@@ -187,7 +187,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         platformLogger = new BukkitLogger(this);
         platformUtil = new BukkitPlatformUtil();
         // Load messages
-        messageProvider = new BukkitMessageProvider(this);
+        messageProvider = new SpongeMessageProvider(this);
         messageProvider.loadMessages();
         // Init managers
         skillManager = new SkillManager(this);
