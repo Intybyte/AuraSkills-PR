@@ -11,24 +11,22 @@ import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.level.LevelManager;
 import dev.aurelium.auraskills.common.user.User;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityEvent;
+import net.kyori.adventure.sound.Sound;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.effect.sound.SoundType;
+import org.spongepowered.api.effect.sound.SoundTypes;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BukkitLevelManager extends LevelManager {
+public class SpongeLevelManager extends LevelManager {
 
     private final AuraSkills plugin;
     private final Set<SourceLeveler> levelers;
 
-    public BukkitLevelManager(AuraSkills plugin) {
+    public SpongeLevelManager(AuraSkills plugin) {
         super(plugin);
         this.plugin = plugin;
         this.levelers = new HashSet<>();
@@ -100,21 +98,34 @@ public class BukkitLevelManager extends LevelManager {
 
     @Override
     public void playLevelUpSound(@NotNull User user) {
-        Player player = ((SpongeUser) user).getPlayer();
+        ServerPlayer player = ((SpongeUser) user).getPlayer();
         if (player == null) return;
         try {
-            player.playSound(player.getLocation(), Sound.valueOf(plugin.configString(Option.LEVELER_SOUND_TYPE))
-                    , SoundCategory.valueOf(plugin.configString(Option.LEVELER_SOUND_CATEGORY))
-                    , (float) plugin.configDouble(Option.LEVELER_SOUND_VOLUME), (float) plugin.configDouble(Option.LEVELER_SOUND_PITCH));
+            String soundConfig = plugin.configString(Option.LEVELER_SOUND_TYPE);
+            SoundType soundType = SoundTypes.registry().value(ResourceKey.minecraft(soundConfig));
+            Sound.Source source = Sound.Source.valueOf(plugin.configString(Option.LEVELER_SOUND_CATEGORY));
+            float volume = (float) plugin.configDouble(Option.LEVELER_SOUND_VOLUME);
+            float pitch = (float) plugin.configDouble(Option.LEVELER_SOUND_PITCH);
+
+            Sound sound = Sound.sound(soundType, source, volume, pitch);
+
+            player.playSound(sound);
         } catch (Exception e) {
             plugin.logger().warn("Error playing level up sound (Check config) Played the default sound instead");
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER, 1f, 0.5f);
+            Sound levelUp = Sound.sound(
+                    SoundTypes.ENTITY_PLAYER_LEVELUP.get().key().key(),
+                    Sound.Source.MASTER,
+                    1f,
+                    0.5f
+            );
+
+            player.playSound(levelUp);
         }
     }
 
     @Override
     public void reloadModifiers(User user) {
-        Player player = ((SpongeUser) user).getPlayer();
+        ServerPlayer player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             plugin.getModifierManager().reloadPlayer(player);
         }

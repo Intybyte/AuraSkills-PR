@@ -52,7 +52,7 @@ import dev.aurelium.auraskills.sponge.event.BukkitEventHandler;
 import dev.aurelium.auraskills.sponge.hooks.WorldGuardFlags;
 import dev.aurelium.auraskills.sponge.item.ApiItemManager;
 import dev.aurelium.auraskills.sponge.item.BukkitItemRegistry;
-import dev.aurelium.auraskills.sponge.level.BukkitLevelManager;
+import dev.aurelium.auraskills.sponge.level.SpongeLevelManager;
 import dev.aurelium.auraskills.sponge.logging.BukkitLogger;
 import dev.aurelium.auraskills.sponge.loot.LootTableManager;
 import dev.aurelium.auraskills.sponge.mana.SpongeManaAbilityManager;
@@ -138,7 +138,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private PlatformLogger platformLogger;
     private SpongeMessageProvider messageProvider;
     private SpongeConfigProvider configProvider;
-    private BukkitLevelManager levelManager;
+    private SpongeLevelManager levelManager;
     private BukkitUserManager userManager;
     private XpRequirements xpRequirements;
     private HookManager hookManager;
@@ -243,7 +243,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         CommandRegistrar commandRegistrar = new CommandRegistrar(this);
         commandManager = commandRegistrar.registerCommands();
         messageProvider.setACFMessages(commandManager);
-        levelManager = new BukkitLevelManager(this);
+        levelManager = new SpongeLevelManager(this);
         antiAfkManager = new AntiAfkManager(this); // Requires config loaded
         registerPriorityEvents();
         // Enabled bStats
