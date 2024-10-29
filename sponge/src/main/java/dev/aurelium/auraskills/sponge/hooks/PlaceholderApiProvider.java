@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.hooks;
 
 import dev.aurelium.auraskills.api.ability.Ability;
-import dev.aurelium.auraskills.api.bukkit.BukkitTraitHandler;
+import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
 import dev.aurelium.auraskills.api.skill.Skill;
@@ -194,7 +194,7 @@ public class PlaceholderApiProvider extends PlaceholderExpansion {
             } else if (identifier.endsWith("bonus")) {
                 return NumberUtil.format2(user.getBonusTraitLevel(trait));
             } else if (identifier.endsWith("menu")) {
-                BukkitTraitHandler handler = plugin.getTraitManager().getTraitImpl(trait);
+                SpongeTraitHandler handler = plugin.getTraitManager().getTraitImpl(trait);
                 if (handler != null) {
                     return handler.getMenuDisplay(user.getEffectiveTraitLevel(trait), trait, user.getLocale());
                 }

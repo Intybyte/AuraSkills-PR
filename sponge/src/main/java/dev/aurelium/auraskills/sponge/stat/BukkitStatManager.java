@@ -2,12 +2,12 @@ package dev.aurelium.auraskills.sponge.stat;
 
 import dev.aurelium.auraskills.api.stat.Stat;
 import dev.aurelium.auraskills.api.trait.Trait;
-import dev.aurelium.auraskills.sponge.trait.BukkitTraitManager;
+import dev.aurelium.auraskills.sponge.trait.SpongeTraitManager;
 import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
 import dev.aurelium.auraskills.common.stat.StatManager;
 import dev.aurelium.auraskills.common.user.User;
-import dev.aurelium.auraskills.api.bukkit.BukkitTraitHandler;
+import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
 import org.bukkit.entity.Player;
 
 public class BukkitStatManager extends StatManager {
@@ -23,7 +23,7 @@ public class BukkitStatManager extends StatManager {
         if (player == null) return;
 
         for (Trait trait : plugin.getTraitManager().getEnabledTraits()) {
-            BukkitTraitHandler traitImpl = ((BukkitTraitManager) plugin.getTraitManager()).getTraitImpl(trait);
+            SpongeTraitHandler traitImpl = ((SpongeTraitManager) plugin.getTraitManager()).getTraitImpl(trait);
             if (traitImpl == null) continue;
 
             traitImpl.onReload(player, user.toApi(), trait);
@@ -48,7 +48,7 @@ public class BukkitStatManager extends StatManager {
         if (player == null) return;
         // Reload traits
         for (Trait trait : stat.getTraits()) {
-            BukkitTraitHandler traitImpl = ((BukkitTraitManager) plugin.getTraitManager()).getTraitImpl(trait);
+            SpongeTraitHandler traitImpl = ((SpongeTraitManager) plugin.getTraitManager()).getTraitImpl(trait);
             if (traitImpl == null) continue;
 
             traitImpl.onReload(player, user.toApi(), trait);

@@ -3,11 +3,11 @@ package dev.aurelium.auraskills.sponge.trait;
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.user.SkillsUser;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.api.bukkit.BukkitTraitHandler;
+import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-public abstract class TraitImpl implements BukkitTraitHandler, Listener {
+public abstract class TraitImpl implements SpongeTraitHandler, Listener {
 
     protected final AuraSkills plugin;
     private final Trait[] traits;

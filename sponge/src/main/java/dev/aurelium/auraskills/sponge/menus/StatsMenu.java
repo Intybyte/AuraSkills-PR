@@ -1,6 +1,6 @@
 package dev.aurelium.auraskills.sponge.menus;
 
-import dev.aurelium.auraskills.api.bukkit.BukkitTraitHandler;
+import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.stat.CustomStat;
 import dev.aurelium.auraskills.api.stat.Stat;
@@ -131,7 +131,7 @@ public class StatsMenu {
 
         for (Trait trait : stat.getTraits()) {
             if (!trait.isEnabled()) continue;
-            BukkitTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
+            SpongeTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
             if (impl == null) continue;
             builder.append(info.menu().getFormat("trait_entry"),
                     "{trait}", trait.getDisplayName(locale),
@@ -147,7 +147,7 @@ public class StatsMenu {
             Trait trait = stat.getTraits().get(0);
             double value = user.getEffectiveTraitLevel(trait);
 
-            BukkitTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
+            SpongeTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
             if (impl != null) {
                 return impl.getMenuDisplay(value, trait, user.getLocale());
             } else {

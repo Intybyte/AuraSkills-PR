@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.item;
 
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-import dev.aurelium.auraskills.api.bukkit.BukkitTraitHandler;
+import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.item.ModifierType;
 import dev.aurelium.auraskills.api.registry.NamespaceIdentified;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
@@ -277,7 +277,7 @@ public class SkillsItem {
                     "{symbol}", stat.getSymbol(locale))));
         } else if (identified instanceof Trait trait) {
             @Nullable Stat stat = plugin.getTraitManager().getLinkedStats(trait).stream().findFirst().orElse(null);
-            BukkitTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
+            SpongeTraitHandler impl = plugin.getTraitManager().getTraitImpl(trait);
             String formatValue;
             // Don't use menu display for gathering luck traits (farming_luck, etc.) because it has extra info
             if (impl != null && !trait.getId().getKey().contains("_luck")) {

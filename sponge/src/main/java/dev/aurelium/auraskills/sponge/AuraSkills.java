@@ -65,14 +65,13 @@ import dev.aurelium.auraskills.sponge.requirement.RequirementManager;
 import dev.aurelium.auraskills.sponge.reward.BukkitRewardManager;
 import dev.aurelium.auraskills.sponge.scheduler.BukkitScheduler;
 import dev.aurelium.auraskills.sponge.stat.BukkitStatManager;
-import dev.aurelium.auraskills.sponge.trait.BukkitTraitManager;
+import dev.aurelium.auraskills.sponge.trait.SpongeTraitManager;
 import dev.aurelium.auraskills.sponge.ui.BukkitUiProvider;
 import dev.aurelium.auraskills.sponge.user.BukkitUserManager;
 import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
 import dev.aurelium.slate.inv.InventoryManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.platform.spongeapi.SpongeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.LinearComponents;
@@ -128,7 +127,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private SpongeAbilityManager abilityManager;
     private SpongeManaAbilityManager manaAbilityManager;
     private StatManager statManager;
-    private BukkitTraitManager traitManager;
+    private SpongeTraitManager traitManager;
     private SkillRegistry skillRegistry;
     private StatRegistry statRegistry;
     private TraitRegistry traitRegistry;
@@ -195,7 +194,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         abilityManager = new SpongeAbilityManager(this);
         manaAbilityManager = new SpongeManaAbilityManager(this);
         statManager = new BukkitStatManager(this);
-        traitManager = new BukkitTraitManager(this);
+        traitManager = new SpongeTraitManager(this);
 
         // Init registries
         skillRegistry = new SkillRegistry(this);
