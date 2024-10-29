@@ -8,21 +8,18 @@ import dev.aurelium.auraskills.sponge.skills.agility.AgilityAbilities;
 import dev.aurelium.auraskills.sponge.util.VersionUtils;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.data.DataUtil;
-import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.attribute.AttributeModifier.Operation;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.EquipmentSlotGroup;
+import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.entity.attribute.Attribute;
+import org.spongepowered.api.entity.attribute.AttributeModifier;
+import org.spongepowered.api.entity.attribute.AttributeOperation;
+import org.spongepowered.api.entity.attribute.AttributeOperations;
+import org.spongepowered.api.entity.attribute.type.AttributeTypes;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -52,14 +49,16 @@ public class HpTrait extends TraitImpl {
     }
 
     @Override
-    public double getBaseLevel(Player player, Trait trait) {
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if (attribute == null) return 0.0;
-        double current = attribute.getValue();
+    public double getBaseLevel(ServerPlayer player, Trait trait) {
+        Optional<Attribute> optionalAttribute = player.attribute(AttributeTypes.GENERIC_MAX_HEALTH);;
+        if (optionalAttribute.isEmpty()) return 0.0;
+
+        Attribute attribute = optionalAttribute.get();
+        double current = attribute.value();
         // Subtract skills attribute value
-        for (AttributeModifier am : attribute.getModifiers()) {
+        for (AttributeModifier am : attribute.modifiers()) {
             if (isSkillsHealthModifier(am)) {
-                current -= am.getAmount();
+                current -= am.amount();
             }
         }
         return current;
@@ -71,7 +70,7 @@ public class HpTrait extends TraitImpl {
     }
 
     @Override
-    public void reload(Player player, Trait trait) {
+    public void reload(ServerPlayer player, Trait trait) {
         setHealth(player, plugin.getUser(player));
 
         plugin.getAbilityManager().getAbilityImpl(AgilityAbilities.class).removeFleeting(player);
@@ -99,7 +98,7 @@ public class HpTrait extends TraitImpl {
         }
     }
 
-    private void setWorldChange(PlayerChangedWorldEvent event, Player player, User user) {
+    private void setWorldChange(PlayerChangedWorldEvent event, ServerPlayer player, User user) {
         setHealth(player, user);
 
         var worldManager = plugin.getWorldManager();
@@ -125,19 +124,21 @@ public class HpTrait extends TraitImpl {
     }
 
     @SuppressWarnings("removal")
-    private void setHealth(Player player, User user) {
+    private void setHealth(ServerPlayer player, User user) {
         Trait trait = Traits.HP;
 
         double modifier = user.getBonusTraitLevel(trait);
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if (attribute == null) return;
-        double originalMaxHealth = attribute.getValue();
+        Optional<Attribute> optionalAttribute = player.attribute(AttributeTypes.GENERIC_MAX_HEALTH);
+        if (optionalAttribute.isEmpty()) return;
+
+        Attribute attribute = optionalAttribute.get();
+        double originalMaxHealth = attribute.value();
         boolean hasChange = true;
         // Removes existing modifiers of the same name and check for change
-        for (AttributeModifier am : attribute.getModifiers()) {
+        for (AttributeModifier am : attribute.modifiers()) {
             if (isSkillsHealthModifier(am)) {
                 // Check for any changes, if not, return
-                if (Math.abs(originalMaxHealth - (originalMaxHealth - am.getAmount() + modifier)) <= threshold) {
+                if (Math.abs(originalMaxHealth - (originalMaxHealth - am.amount() + modifier)) <= threshold) {
                     hasChange = false;
                 }
                 // Removes if it has changed
@@ -149,13 +150,13 @@ public class HpTrait extends TraitImpl {
         // Disable health if disabled or in disable world
         if (plugin.getWorldManager().isInDisabledWorld(player.getLocation()) || !trait.isEnabled()) {
             player.setHealthScaled(false);
-            for (AttributeModifier am : attribute.getModifiers()) {
+            for (AttributeModifier am : attribute.modifiers()) {
                 if (isSkillsHealthModifier(am)) {
                     attribute.removeModifier(am);
                 }
             }
-            if (player.getHealth() >= originalMaxHealth) {
-                player.setHealth(attribute.getValue());
+            if (player.health().get() >= originalMaxHealth) {
+                player.health().set(attribute.value());
             }
             return;
         }
@@ -167,20 +168,25 @@ public class HpTrait extends TraitImpl {
         if (hasChange) {
             // Applies modifier
             if (VersionUtils.isAtLeastVersion(21)) {
-                NamespacedKey modifierKey = new NamespacedKey(plugin, ATTRIBUTE_KEY);
+                //TODO i have no idea how these damn ID things work, i only know the ID must be unique and mojang sucks
+                ResourceKey modifierKey = ResourceKey.of(plugin.container(), ATTRIBUTE_KEY);
+                var builder = AttributeModifier.builder()
+                                    .id(UUID.fromString(plugin.container().metadata().id()))
+                                    .name(ATTRIBUTE_KEY)
+                                    .operation(AttributeOperations.ADDITION)
                 attribute.addModifier(new AttributeModifier(modifierKey, modifier, Operation.ADD_NUMBER, EquipmentSlotGroup.ANY));
             } else {
                 attribute.addModifier(new AttributeModifier(ATTRIBUTE_ID, "skillsHealth", modifier, Operation.ADD_NUMBER));
             }
             // Sets health to max if over max
-            if (player.getHealth() > attribute.getValue()) {
-                player.setHealth(attribute.getValue());
+            if (player.health().get() > attribute.value()) {
+                player.health().set(attribute.value());
             }
             if (trait.optionBoolean("keep_full_on_increase", false) && attribute.getValue() > originalMaxHealth) {
                 // Heals player to full health if had full health before modifier
                 final double THRESHOLD = 0.01;
-                if (player.getHealth() >= originalMaxHealth - THRESHOLD) {
-                    player.setHealth(attribute.getValue());
+                if (player.health().get() >= originalMaxHealth - THRESHOLD) {
+                    player.health().set(attribute.value());
                 }
             }
         }
@@ -188,11 +194,11 @@ public class HpTrait extends TraitImpl {
     }
 
     private boolean isSkillsHealthModifier(AttributeModifier am) {
-        if (am.getName().equals("skillsHealth")) {
+        if (am.name().equals("skillsHealth")) {
             return true;
         }
         if (VersionUtils.isAtLeastVersion(21)) {
-            String namespace = am.getKey().getNamespace();
+            String namespace = am.uni().getNamespace();
             String key = am.getKey().getKey();
             if (key.equals(ATTRIBUTE_ID.toString())) {
                 // When migrating to 1.21, old attributes are converted to the NamespacedKey minecraft:ATTRIBUTE_ID
@@ -205,7 +211,7 @@ public class HpTrait extends TraitImpl {
         return false;
     }
 
-    private void applyScaling(Player player) {
+    private void applyScaling(ServerPlayer player) {
         AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (attribute == null) return;
 

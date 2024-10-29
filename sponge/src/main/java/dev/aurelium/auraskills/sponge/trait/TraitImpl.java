@@ -4,8 +4,8 @@ import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.user.SkillsUser;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public abstract class TraitImpl implements SpongeTraitHandler, Listener {
 
@@ -23,11 +23,11 @@ public abstract class TraitImpl implements SpongeTraitHandler, Listener {
     }
 
     @Override
-    public void onReload(Player player, SkillsUser user, Trait trait) {
+    public void onReload(ServerPlayer player, SkillsUser user, Trait trait) {
         reload(player, trait);
     }
 
-    protected void reload(Player player, Trait trait) {
+    protected void reload(ServerPlayer player, Trait trait) {
 
     }
 
