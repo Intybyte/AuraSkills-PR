@@ -84,6 +84,7 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
@@ -335,7 +336,12 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @NotNull
-    public User getUser(Player player) {
+    public User getUser(ServerPlayer player) {
+        return userManager.getUser(player);
+    }
+
+    @NotNull
+    public User getUser(org.spongepowered.api.entity.living.player.User player) {
         return userManager.getUser(player);
     }
 
@@ -475,7 +481,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     public <T extends Audience> Locale getLocale(T sender) {
-        if (sender instanceof Player player) {
+        if (sender instanceof ServerPlayer player) {
             return getUser(player).getLocale();
         } else {
             return messageProvider.getDefaultLanguage();
