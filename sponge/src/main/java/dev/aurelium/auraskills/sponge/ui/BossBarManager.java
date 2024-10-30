@@ -12,24 +12,21 @@ import dev.aurelium.auraskills.common.util.math.BigNumber;
 import dev.aurelium.auraskills.common.util.math.RomanNumber;
 import dev.aurelium.auraskills.common.util.text.TextUtil;
 import dev.aurelium.slate.text.TextFormatter;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class BossBarManager implements Listener {
+public class BossBarManager {
 
     private final Map<UUID, Map<Skill, BossBar>> bossBars;
     private final Map<UUID, Map<Skill, Integer>> currentActions;
@@ -126,15 +123,14 @@ public class BossBarManager implements Listener {
             colors.put(skill, color);
             overlays.put(skill, overlay);
         }
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            Audience audience = plugin.getAudiences().player(player);
+        for (ServerPlayer player : Sponge.server().onlinePlayers()) {
             for (Map.Entry<UUID, BossBar> entry : singleBossBars.entrySet()) {
-                audience.hideBossBar(entry.getValue());
+                player.hideBossBar(entry.getValue());
             }
             for (Map.Entry<UUID, Map<Skill, BossBar>> entry : bossBars.entrySet()) {
                 Map<Skill, BossBar> bossBars = entry.getValue();
                 for (Map.Entry<Skill, BossBar> bossBarEntry : bossBars.entrySet()) {
-                    audience.hideBossBar(bossBarEntry.getValue());
+                    player.hideBossBar(bossBarEntry.getValue());
                 }
             }
         }
@@ -142,8 +138,8 @@ public class BossBarManager implements Listener {
         singleBossBars.clear();
     }
 
-    public void sendBossBar(Player player, Skill skill, double currentXp, double levelXp, double xpGained, int level, boolean maxed, double income) {
-        UUID playerId = player.getUniqueId();
+    public void sendBossBar(ServerPlayer player, Skill skill, double currentXp, double levelXp, double xpGained, int level, boolean maxed, double income) {
+        UUID playerId = player.uniqueId();
         if (maxed && !plugin.configBoolean(Option.BOSS_BAR_DISPLAY_MAXED)) { // display-maxed option
             return;
         }
@@ -194,7 +190,7 @@ public class BossBarManager implements Listener {
         scheduleHide(playerId, skill, bossBar); // Schedule tasks to hide the boss bar
     }
 
-    private BossBar handleNewBossBar(Player player, Skill skill, float progressOld, float progressNew, String text) {
+    private BossBar handleNewBossBar(ServerPlayer player, Skill skill, float progressOld, float progressNew, String text) {
         BossBar.Color color = getColor(skill);
         BossBar.Overlay overlay = getOverlay(skill);
 
@@ -206,18 +202,18 @@ public class BossBarManager implements Listener {
         } else {  // Update the progress later to display its animation from progressOld to progressNew
             plugin.getScheduler().scheduleSync(() -> bossBar.progress(progressNew), 2 * 50, TimeUnit.MILLISECONDS);
         }
-        plugin.getAudiences().player(player).showBossBar(bossBar);
+        player.showBossBar(bossBar);
 
         // Add to maps
         if (mode.equals("single")) {
-            singleBossBars.put(player.getUniqueId(), bossBar);
+            singleBossBars.put(player.uniqueId(), bossBar);
         } else {
-            bossBars.get(player.getUniqueId()).put(skill, bossBar);
+            bossBars.get(player.uniqueId()).put(skill, bossBar);
         }
         return bossBar;
     }
 
-    private void handleExistingBossBar(BossBar bossBar, Player player, Skill skill, float progress, String text) {
+    private void handleExistingBossBar(BossBar bossBar, ServerPlayer player, Skill skill, float progress, String text) {
         Component name = tf.toComponent(text);
 
         if (!ANIMATE_PROGRESS) {  // Update boss bar progress immediately
@@ -228,10 +224,10 @@ public class BossBarManager implements Listener {
         bossBar.name(name); // Update the boss bar to the new text value
         bossBar.color(getColor(skill));
 
-        plugin.getAudiences().player(player).showBossBar(bossBar);
+        player.showBossBar(bossBar);
     }
 
-    private String getBossBarText(Player player, Skill skill, double currentXp, long levelXp, double xpGained, int level, boolean maxed, double income, Locale locale) {
+    private String getBossBarText(ServerPlayer player, Skill skill, double currentXp, long levelXp, double xpGained, int level, boolean maxed, double income, Locale locale) {
         String bossBarText;
         String currentXpText = getCurrentXpText(currentXp);
         MessageProvider provider = plugin.getMessageProvider();
@@ -276,8 +272,8 @@ public class BossBarManager implements Listener {
         return currentXpText;
     }
 
-    public void incrementAction(Player player, Skill skill) {
-        UUID playerId = player.getUniqueId();
+    public void incrementAction(ServerPlayer player, Skill skill) {
+        UUID playerId = player.uniqueId();
         if (!singleCheckCurrentActions.containsKey(playerId)) singleCheckCurrentActions.put(playerId, 0);
         if (!checkCurrentActions.containsKey(playerId)) checkCurrentActions.put(playerId, new HashMap<>());
         // Increment current action
@@ -304,34 +300,37 @@ public class BossBarManager implements Listener {
                     return;
                 }
                 if (bossBar != null) {
-                    plugin.getAudiences().player(playerId).hideBossBar(bossBar);
+                    Optional<ServerPlayer> optPlayer = Sponge.server().player(playerId);
+                    optPlayer.ifPresent(player -> player.hideBossBar(bossBar));
                 }
                 singleCheckCurrentActions.remove(playerId);
             }, stayTime * 50L, TimeUnit.MILLISECONDS);
-        } else {
-            Map<Skill, Integer> multiCurrentActions = currentActions.get(playerId);
-            if (multiCurrentActions == null) {
+            return;
+        }
+
+        Map<Skill, Integer> multiCurrentActions = currentActions.get(playerId);
+        if (multiCurrentActions == null) {
+            return;
+        }
+        final int currentAction = multiCurrentActions.get(skill);
+
+        plugin.getScheduler().scheduleSync(() -> {
+            if (mode.equals("single")) {
                 return;
             }
-            final int currentAction = multiCurrentActions.get(skill);
-
-            plugin.getScheduler().scheduleSync(() -> {
-                if (mode.equals("single")) {
-                    return;
-                }
-                Map<Skill, Integer> currActions = currentActions.get(playerId);
-                if (currActions == null) {
-                    return;
-                }
-                if (currentAction != currActions.getOrDefault(skill, 0)) {
-                    return;
-                }
-                if (bossBar != null) {
-                    plugin.getAudiences().player(playerId).hideBossBar(bossBar);
-                }
-                checkCurrentActions.remove(playerId);
-            }, stayTime * 50L, TimeUnit.MILLISECONDS);
-        }
+            Map<Skill, Integer> currActions = currentActions.get(playerId);
+            if (currActions == null) {
+                return;
+            }
+            if (currentAction != currActions.getOrDefault(skill, 0)) {
+                return;
+            }
+            if (bossBar != null) {
+                Optional<ServerPlayer> optPlayer = Sponge.server().player(playerId);
+                optPlayer.ifPresent( player -> player.hideBossBar(bossBar));
+            }
+            checkCurrentActions.remove(playerId);
+        }, stayTime * 50L, TimeUnit.MILLISECONDS);
     }
 
     private BossBar.Color getColor(Skill skill) {
@@ -342,19 +341,18 @@ public class BossBarManager implements Listener {
         return overlays.getOrDefault(skill, BossBar.Overlay.PROGRESS);
     }
 
-    public int getCurrentAction(Player player, Skill skill) {
+    public int getCurrentAction(ServerPlayer player, Skill skill) {
         if (mode.equals("single")) {
-            return singleCheckCurrentActions.get(player.getUniqueId());
-        } else {
-            Map<Skill, Integer> multiCurrentActions = checkCurrentActions.get(player.getUniqueId());
-            if (multiCurrentActions != null) {
-                return multiCurrentActions.get(skill);
-            }
+            return singleCheckCurrentActions.get(player.uniqueId());
+        }
+        Map<Skill, Integer> multiCurrentActions = checkCurrentActions.get(player.getUniqueId());
+        if (multiCurrentActions != null) {
+            return multiCurrentActions.get(skill);
         }
         return -1;
     }
 
-    private String setPlaceholders(Player player, String input) {
+    private String setPlaceholders(ServerPlayer player, String input) {
         if (plugin.configBoolean(Option.BOSS_BAR_PLACEHOLDER_API) && plugin.getHookManager().isRegistered(PlaceholderHook.class)) {
             return plugin.getHookManager().getHook(PlaceholderHook.class).setPlaceholders(plugin.getUser(player), input);
         } else {
