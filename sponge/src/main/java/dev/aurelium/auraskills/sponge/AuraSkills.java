@@ -67,7 +67,7 @@ import dev.aurelium.auraskills.sponge.scheduler.BukkitScheduler;
 import dev.aurelium.auraskills.sponge.stat.BukkitStatManager;
 import dev.aurelium.auraskills.sponge.trait.SpongeTraitManager;
 import dev.aurelium.auraskills.sponge.ui.BukkitUiProvider;
-import dev.aurelium.auraskills.sponge.user.BukkitUserManager;
+import dev.aurelium.auraskills.sponge.user.SpongeUserManager;
 import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
 import dev.aurelium.slate.inv.InventoryManager;
 import net.kyori.adventure.audience.Audience;
@@ -139,7 +139,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private SpongeMessageProvider messageProvider;
     private SpongeConfigProvider configProvider;
     private SpongeLevelManager levelManager;
-    private BukkitUserManager userManager;
+    private SpongeUserManager userManager;
     private XpRequirements xpRequirements;
     private HookManager hookManager;
     private WorldGuardFlags worldGuardFlags;
@@ -210,7 +210,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         scheduler = new BukkitScheduler(this);
         eventHandler = new BukkitEventHandler(this);
         hookManager = new HookManager();
-        userManager = new BukkitUserManager(this);
+        userManager = new SpongeUserManager(this);
         presetManager = new PresetManager(this);
 
         generateConfigs(); // Generate default config files if missing
@@ -343,7 +343,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @Override
-    public UserManager getUserManager() {
+    public SpongeUserManager getUserManager() {
         return userManager;
     }
 
