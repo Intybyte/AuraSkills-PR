@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.item;
 
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.item.ModifierType;
 import dev.aurelium.auraskills.api.registry.NamespaceIdentified;
 import dev.aurelium.auraskills.api.registry.NamespacedId;

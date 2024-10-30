@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.api.source;
 
 import dev.aurelium.auraskills.api.AuraSkillsApi;
-import dev.aurelium.auraskills.api.AuraSkillsBukkit;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.user.SkillsUser;
 import org.bukkit.GameMode;
@@ -40,7 +40,7 @@ public class LevelerContext {
     }
 
     public boolean blockLocation(Player player, Location location, Skill skill) {
-        return AuraSkillsBukkit.get().getLocationManager().isXpGainBlocked(location, player, skill);
+        return AuraSkillsSponge.get().getLocationManager().isXpGainBlocked(location, player, skill);
     }
 
     public boolean blockPlayer(Player player, Skill skill) {

@@ -1,4 +1,4 @@
-package dev.aurelium.auraskills.api.bukkit;
+package dev.aurelium.auraskills.api.sponge;
 
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.trait.TraitHandler;

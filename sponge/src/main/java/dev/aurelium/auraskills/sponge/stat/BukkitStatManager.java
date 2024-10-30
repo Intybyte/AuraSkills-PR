@@ -7,7 +7,7 @@ import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
 import dev.aurelium.auraskills.common.stat.StatManager;
 import dev.aurelium.auraskills.common.user.User;
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import org.bukkit.entity.Player;
 
 public class BukkitStatManager extends StatManager {

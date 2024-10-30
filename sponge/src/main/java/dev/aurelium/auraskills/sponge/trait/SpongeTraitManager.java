@@ -1,6 +1,6 @@
 package dev.aurelium.auraskills.sponge.trait;
 
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.trait.TraitHandler;
 import dev.aurelium.auraskills.api.util.NumberUtil;

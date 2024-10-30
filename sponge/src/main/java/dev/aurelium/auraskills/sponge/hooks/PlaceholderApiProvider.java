@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.hooks;
 
 import dev.aurelium.auraskills.api.ability.Ability;
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.registry.NamespacedId;
 import dev.aurelium.auraskills.api.skill.Skill;

@@ -1,6 +1,6 @@
 package dev.aurelium.auraskills.sponge.api;
 
-import dev.aurelium.auraskills.api.AuraSkillsBukkit;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
 import dev.aurelium.auraskills.api.item.ItemManager;
 import dev.aurelium.auraskills.api.menu.MenuManager;
 import dev.aurelium.auraskills.api.region.LocationManager;
@@ -10,7 +10,7 @@ import dev.aurelium.auraskills.sponge.api.implementation.ApiLocationManager;
 import dev.aurelium.auraskills.sponge.api.implementation.ApiMenuManager;
 import dev.aurelium.auraskills.sponge.api.implementation.ApiRegions;
 
-public class ApiAuraSkillsBukkit implements AuraSkillsBukkit {
+public class ApiAuraSkillsBukkit implements AuraSkillsSponge {
 
     private final ApiRegions blockTracker;
     private final ItemManager itemManager;

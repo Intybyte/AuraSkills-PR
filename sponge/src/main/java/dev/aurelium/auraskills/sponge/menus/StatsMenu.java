@@ -1,6 +1,6 @@
 package dev.aurelium.auraskills.sponge.menus;
 
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.stat.CustomStat;
 import dev.aurelium.auraskills.api.stat.Stat;

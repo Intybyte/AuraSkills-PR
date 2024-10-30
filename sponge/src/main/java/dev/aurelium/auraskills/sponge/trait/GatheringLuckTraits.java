@@ -1,6 +1,6 @@
 package dev.aurelium.auraskills.sponge.trait;
 
-import dev.aurelium.auraskills.api.AuraSkillsBukkit;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
 import dev.aurelium.auraskills.api.ability.Abilities;
 import dev.aurelium.auraskills.api.ability.Ability;
 import dev.aurelium.auraskills.api.event.loot.LootDropEvent;
@@ -172,7 +172,7 @@ public class GatheringLuckTraits extends TraitImpl {
         if (!plugin.getUser(player).hasSkillPermission(skill)) {
             return true;
         }
-        return AuraSkillsBukkit.get().getLocationManager().isPluginDisabled(player.getLocation(), player);
+        return AuraSkillsSponge.get().getLocationManager().isPluginDisabled(player.getLocation(), player);
     }
 
     private int getGuaranteedExtra(double value) {

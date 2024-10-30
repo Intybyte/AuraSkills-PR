@@ -3,6 +3,8 @@ package dev.aurelium.auraskills.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import dev.aurelium.auraskills.api.AuraSkillsApi;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
+import dev.aurelium.auraskills.api.event.skill.SkillsLoadEvent;
 import dev.aurelium.auraskills.api.item.ItemManager;
 import dev.aurelium.auraskills.sponge.ability.SpongeAbilityManager;
 import dev.aurelium.auraskills.common.AuraSkillsPlugin;
@@ -42,7 +44,8 @@ import dev.aurelium.auraskills.common.ui.UiProvider;
 import dev.aurelium.auraskills.common.user.User;
 import dev.aurelium.auraskills.common.util.PlatformUtil;
 import dev.aurelium.auraskills.sponge.antiafk.AntiAfkManager;
-import dev.aurelium.auraskills.sponge.api.implementation.SpongeApiProvider;
+import dev.aurelium.auraskills.sponge.api.ApiAuraSkillsBukkit;
+import dev.aurelium.auraskills.sponge.api.ApiBukkitRegistrationUtil;
 import dev.aurelium.auraskills.sponge.commands.CommandRegistrar;
 import dev.aurelium.auraskills.sponge.commands.ConfirmManager;
 import dev.aurelium.auraskills.sponge.config.SpongeConfigProvider;
@@ -67,6 +70,7 @@ import dev.aurelium.auraskills.sponge.trait.SpongeTraitManager;
 import dev.aurelium.auraskills.sponge.ui.BukkitUiProvider;
 import dev.aurelium.auraskills.sponge.user.SpongeUserManager;
 import dev.aurelium.auraskills.sponge.util.BukkitPlatformUtil;
+import dev.aurelium.auraskills.sponge.util.MetricsUtil;
 import dev.aurelium.slate.inv.InventoryManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
@@ -119,6 +123,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     private AuraSkillsApi api;
+    private AuraSkillsSponge apiBukkit;
     private ApiProvider apiProvider;
     private SkillManager skillManager;
     private SpongeAbilityManager abilityManager;
@@ -173,18 +178,18 @@ public class AuraSkills implements AuraSkillsPlugin {
 
     @Listener
     public void onConstructPlugin(final ConstructPluginEvent event) {
-        this.logger.info("Constructing auraskills");
-        
         // Register the API
         this.api = new ApiAuraSkills(this);
-        this.apiProvider = new SpongeApiProvider(this);
+        this.apiProvider = new BukkitApiProvider(this);
         ApiRegistrationUtil.register(api);
         this.itemManager = new ApiItemManager(this); // Needed in ApiAuraSkillsBukkit
+        this.apiBukkit = new ApiAuraSkillsBukkit(this);
+        ApiBukkitRegistrationUtil.register(apiBukkit);
 
-        platformLogger = new BukkitLogger(this);
+        logger = new BukkitLogger(this);
         platformUtil = new BukkitPlatformUtil();
         // Load messages
-        messageProvider = new SpongeMessageProvider(this);
+        messageProvider = new SpongeModifierManager(this);
         messageProvider.loadMessages();
         // Init managers
         skillManager = new SkillManager(this);
@@ -209,7 +214,6 @@ public class AuraSkills implements AuraSkillsPlugin {
         hookManager = new HookManager();
         userManager = new SpongeUserManager(this);
         presetManager = new PresetManager(this);
-
         generateConfigs(); // Generate default config files if missing
         generateDefaultMenuFiles();
         // Handle migration
@@ -240,11 +244,11 @@ public class AuraSkills implements AuraSkillsPlugin {
         CommandRegistrar commandRegistrar = new CommandRegistrar(this);
         commandManager = commandRegistrar.registerCommands();
         messageProvider.setACFMessages(commandManager);
-        levelManager = new SpongeLevelManager(this);
+        levelManager = new BukkitLevelManager(this);
         antiAfkManager = new AntiAfkManager(this); // Requires config loaded
         registerPriorityEvents();
         // Enabled bStats
-        Metrics metrics = new Metrics(container, logger, /*idk here*/, 21318);
+        //Metrics metrics = new Metrics(this.container, this.logger, dataFolder.toPath(), 21318);
 
         // Stuff to be run on the first tick
         scheduler.executeSync(() -> {
@@ -262,13 +266,13 @@ public class AuraSkills implements AuraSkillsPlugin {
             registerEvents();
             registerAndLoadMenus();
             // Call SkillsLoadEvent
-            // SkillsLoadEvent event = new SkillsLoadEvent(skillManager.getSkillValues());
-            // Bukkit.getPluginManager().callEvent(event);
+            SkillsLoadEvent event = new SkillsLoadEvent(skillManager.getSkillValues());
+            Bukkit.getPluginManager().callEvent(event);
             // Start updating leaderboards
             leaderboardManager.updateLeaderboards(); // Immediately update leaderboards
             leaderboardManager.startLeaderboardUpdater(); // 5 minute interval
-            // bStats custom charts // ore and sponge are strict about this, better see it later
-            // new MetricsUtil(getInstance()).registerCustomCharts(metrics);
+            // bStats custom charts
+            new MetricsUtil(this).registerCustomCharts(metrics);
         });
     }
 

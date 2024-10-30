@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.api.menu;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.slate.builder.MenuBuilder;
 import dev.aurelium.slate.function.ItemReplacer;
-import org.bukkit.entity.Player;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -30,7 +30,7 @@ public interface MenuManager {
      * @param player the player to open the menu for
      * @param name the name of the menu as registered in Slate
      */
-    void openMenu(Player player, String name);
+    void openMenu(ServerPlayer player, String name);
 
     /**
      * Opens a menu for a player with the given name and properties.
@@ -39,7 +39,7 @@ public interface MenuManager {
      * @param name the name of the menu as registered in Slate
      * @param properties the properties to pass to the menu
      */
-    void openMenu(Player player, String name, Map<String, Object> properties);
+    void openMenu(ServerPlayer player, String name, Map<String, Object> properties);
 
     /**
      * Opens a menu for a player with the given name, properties, and page.
@@ -49,7 +49,7 @@ public interface MenuManager {
      * @param properties the properties to pass to the menu
      * @param page the page to open the menu to
      */
-    void openMenu(Player player, String name, Map<String, Object> properties, int page);
+    void openMenu(ServerPlayer player, String name, Map<String, Object> properties, int page);
 
     /**
      * Opens the AuraSkills level progression menu for a player. Required properties and the
@@ -59,7 +59,7 @@ public interface MenuManager {
      * @param player the player to open the menu for
      * @param skill the skill to open to
      */
-    void openLevelProgressionMenu(Player player, Skill skill);
+    void openLevelProgressionMenu(ServerPlayer player, Skill skill);
 
     /**
      * Registers a context parser to a context class necessary for creating a template with a

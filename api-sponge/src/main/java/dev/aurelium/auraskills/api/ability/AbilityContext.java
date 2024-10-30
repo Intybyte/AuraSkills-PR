@@ -1,9 +1,9 @@
 package dev.aurelium.auraskills.api.ability;
 
 import dev.aurelium.auraskills.api.AuraSkillsApi;
-import dev.aurelium.auraskills.api.AuraSkillsBukkit;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public class AbilityContext {
 
@@ -32,22 +32,22 @@ public class AbilityContext {
      * @param ability the ability to check for
      * @return true if one of the checks failed, false if all checks passed
      */
-    public boolean failsChecks(Player player, Ability ability) {
+    public boolean failsChecks(ServerPlayer player, Ability ability) {
         if (player == null) return true;
         if (!ability.isEnabled()) {
             return true;
         }
-        if (api.getUser(player.getUniqueId()).getAbilityLevel(ability) <= 0) {
+        if (api.getUser(player.uniqueId()).getAbilityLevel(ability) <= 0) {
             return true;
         }
-        if (AuraSkillsBukkit.get().getLocationManager().isPluginDisabled(player.getLocation(), player)) {
+        if (AuraSkillsSponge.get().getLocationManager().isPluginDisabled(player.serverLocation(), player)) {
             return true;
         }
-        if (!api.getUser(player.getUniqueId()).hasSkillPermission(ability.getSkill())) {
+        if (!api.getUser(player.uniqueId()).hasSkillPermission(ability.getSkill())) {
             return true;
         }
         if (api.getMainConfig().isDisabledInCreative()) {
-            return player.getGameMode().equals(GameMode.CREATIVE);
+            return player.gameMode().equals(GameModes.CREATIVE);
         }
         return false;
     }

@@ -3,7 +3,7 @@ package dev.aurelium.auraskills.sponge.trait;
 import dev.aurelium.auraskills.api.trait.Trait;
 import dev.aurelium.auraskills.api.user.SkillsUser;
 import dev.aurelium.auraskills.sponge.AuraSkills;
-import dev.aurelium.auraskills.api.bukkit.SpongeTraitHandler;
+import dev.aurelium.auraskills.api.sponge.SpongeTraitHandler;
 import org.bukkit.event.Listener;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 

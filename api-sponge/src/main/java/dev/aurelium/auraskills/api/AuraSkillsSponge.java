@@ -8,7 +8,7 @@ import dev.aurelium.auraskills.api.region.Regions;
 /**
  * The main interface for API classes that depend on the Bukkit API.
  */
-public interface AuraSkillsBukkit {
+public interface AuraSkillsSponge {
 
     /**
      * Gets the region manager for checking and adding placed blocks.
@@ -39,14 +39,14 @@ public interface AuraSkillsBukkit {
     MenuManager getMenuManager();
 
     /**
-     * Gets the instance of the {@link AuraSkillsBukkit} API,
+     * Gets the instance of the {@link AuraSkillsSponge} API,
      * throwing {@link IllegalStateException} if the API is not loaded yet.
      *
      * @return the Bukkit API instance
      * @throws IllegalStateException if the API is not loaded
      */
-    static AuraSkillsBukkit get() {
-        return AuraSkillsBukkitProvider.getInstance();
+    static AuraSkillsSponge get() {
+        return AuraSkillsSpongeProvider.getInstance();
     }
 
 }

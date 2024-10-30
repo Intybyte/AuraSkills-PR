@@ -1,7 +1,7 @@
 package dev.aurelium.auraskills.sponge.api;
 
-import dev.aurelium.auraskills.api.AuraSkillsBukkit;
-import dev.aurelium.auraskills.api.AuraSkillsBukkitProvider;
+import dev.aurelium.auraskills.api.AuraSkillsSponge;
+import dev.aurelium.auraskills.api.AuraSkillsSpongeProvider;
 
 import java.lang.reflect.Method;
 
@@ -12,17 +12,17 @@ public class ApiBukkitRegistrationUtil {
 
     static {
         try {
-            REGISTER_METHOD = AuraSkillsBukkitProvider.class.getDeclaredMethod("register", AuraSkillsBukkit.class);
+            REGISTER_METHOD = AuraSkillsSpongeProvider.class.getDeclaredMethod("register", AuraSkillsSponge.class);
             REGISTER_METHOD.setAccessible(true);
 
-            UNREGISTER_METHOD = AuraSkillsBukkitProvider.class.getDeclaredMethod("unregister");
+            UNREGISTER_METHOD = AuraSkillsSpongeProvider.class.getDeclaredMethod("unregister");
             UNREGISTER_METHOD.setAccessible(true);
         } catch (NoSuchMethodException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
-    public static void register(AuraSkillsBukkit instance) {
+    public static void register(AuraSkillsSponge instance) {
         try {
             REGISTER_METHOD.invoke(null, instance);
         } catch (ReflectiveOperationException e) {

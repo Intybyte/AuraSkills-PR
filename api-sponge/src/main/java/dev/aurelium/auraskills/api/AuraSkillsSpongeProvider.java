@@ -2,17 +2,17 @@ package dev.aurelium.auraskills.api;
 
 import org.jetbrains.annotations.ApiStatus;
 
-public final class AuraSkillsBukkitProvider {
+public final class AuraSkillsSpongeProvider {
 
-    private static AuraSkillsBukkit instance = null;
+    private static AuraSkillsSponge instance = null;
 
     /**
      * Gets the instance of {@link AuraSkillsApi} containing API classes and methods.
      *
      * @return the API instance
      */
-    public static AuraSkillsBukkit getInstance() {
-        AuraSkillsBukkit instance = AuraSkillsBukkitProvider.instance;
+    public static AuraSkillsSponge getInstance() {
+        AuraSkillsSponge instance = AuraSkillsSpongeProvider.instance;
         if (instance == null) {
             throw new IllegalStateException("AuraSkillsBukkit is not initialized");
         }
@@ -20,17 +20,17 @@ public final class AuraSkillsBukkitProvider {
     }
 
     @ApiStatus.Internal
-    static void register(AuraSkillsBukkit instance) {
-        AuraSkillsBukkitProvider.instance = instance;
+    static void register(AuraSkillsSponge instance) {
+        AuraSkillsSpongeProvider.instance = instance;
     }
 
     @ApiStatus.Internal
     static void unregister() {
-        AuraSkillsBukkitProvider.instance = null;
+        AuraSkillsSpongeProvider.instance = null;
     }
 
     @ApiStatus.Internal
-    private AuraSkillsBukkitProvider() {
+    private AuraSkillsSpongeProvider() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
 
