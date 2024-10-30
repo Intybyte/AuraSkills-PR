@@ -9,28 +9,29 @@ import dev.aurelium.auraskills.api.skill.Multiplier;
 import dev.aurelium.auraskills.sponge.user.SpongeUser;
 import dev.aurelium.auraskills.common.modifier.ModifierManager;
 import dev.aurelium.auraskills.common.user.User;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.ItemStack;
+import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.equipment.EquipmentInventory;
+import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BukkitModifierManager implements ModifierManager {
+public class SpongeModifierManager implements ModifierManager {
 
     private final AuraSkills plugin;
 
-    public BukkitModifierManager(AuraSkills plugin) {
+    public SpongeModifierManager(AuraSkills plugin) {
         this.plugin = plugin;
     }
 
-    public void reloadPlayer(Player player) {
+    public void reloadPlayer(ServerPlayer player) {
         User user = plugin.getUser(player);
-        
         Set<Stat> statsToReload = new HashSet<>();
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (!(item.getType() == Material.AIR)) {
+        ItemStack item = player.itemInHand(HandTypes.MAIN_HAND);
+        if (item.type() != ItemTypes.AIR) {
             SkillsItem skillsItem = new SkillsItem(item, plugin);
             for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ITEM)) {
                 user.removeStatModifier(modifier.name());
@@ -49,8 +50,9 @@ public class BukkitModifierManager implements ModifierManager {
                 }
             }
         }
-        ItemStack itemOffHand = player.getInventory().getItemInOffHand();
-        if (!(itemOffHand.getType() == Material.AIR)) {
+
+        ItemStack itemOffHand = player.itemInHand(HandTypes.OFF_HAND);
+        if (!(itemOffHand.type() == ItemTypes.AIR)) {
             SkillsItem skillsItem = new SkillsItem(itemOffHand, plugin);
             for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ITEM)) {
                 user.removeStatModifier(modifier.name() + ".Offhand");
@@ -71,42 +73,48 @@ public class BukkitModifierManager implements ModifierManager {
                 }
             }
         }
-        EntityEquipment equipment = player.getEquipment();
-        if (equipment != null) {
-            for (ItemStack armor : equipment.getArmorContents()) {
-                if (armor == null) {
-                    continue;
-                }
-                if (armor.getType() == Material.AIR) {
-                    continue;
-                }
-                SkillsItem skillsItem = new SkillsItem(armor, plugin);
-                for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ARMOR)) {
-                    user.removeStatModifier(modifier.name());
-                    statsToReload.add(modifier.stat());
-                }
-                for (Multiplier multiplier : skillsItem.getMultipliers(ModifierType.ARMOR)) {
-                    user.removeMultiplier(multiplier.name());
-                }
-                if (skillsItem.meetsRequirements(ModifierType.ARMOR, player)) {
-                    for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ARMOR)) {
-                        user.addStatModifier(modifier, false);
-                        statsToReload.add(modifier.stat());
-                    }
-                    for (Multiplier multiplier : skillsItem.getMultipliers(ModifierType.ARMOR)) {
-                        user.addMultiplier(multiplier);
-                    }
-                }
-            }
-        }
+
+        EquipmentInventory equipment = player.inventory().armor();
+        equipment.peek(EquipmentTypes.HEAD).ifPresent(it -> handleArmorPiece(it, player, user, statsToReload));
+        equipment.peek(EquipmentTypes.CHEST).ifPresent(it -> handleArmorPiece(it, player, user, statsToReload));
+        equipment.peek(EquipmentTypes.LEGS).ifPresent(it -> handleArmorPiece(it, player, user, statsToReload));
+        equipment.peek(EquipmentTypes.FEET).ifPresent(it -> handleArmorPiece(it, player, user, statsToReload));
+
         for (Stat stat : statsToReload) {
             plugin.getStatManager().reloadStat(user, stat);
         }
     }
 
+    private void handleArmorPiece(ItemStack armor, ServerPlayer player, User user, Set<Stat> statsToReload) {
+        if (armor.type() == ItemTypes.AIR) {
+            return;
+        }
+
+        SkillsItem skillsItem = new SkillsItem(armor, plugin);
+        for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ARMOR)) {
+            user.removeStatModifier(modifier.name());
+            statsToReload.add(modifier.stat());
+        }
+        for (Multiplier multiplier : skillsItem.getMultipliers(ModifierType.ARMOR)) {
+            user.removeMultiplier(multiplier.name());
+        }
+
+        if (!skillsItem.meetsRequirements(ModifierType.ARMOR, player)) {
+            return;
+        }
+
+        for (StatModifier modifier : skillsItem.getStatModifiers(ModifierType.ARMOR)) {
+            user.addStatModifier(modifier, false);
+            statsToReload.add(modifier.stat());
+        }
+        for (Multiplier multiplier : skillsItem.getMultipliers(ModifierType.ARMOR)) {
+            user.addMultiplier(multiplier);
+        }
+    }
+
     @Override
     public void reloadUser(User user) {
-        Player player = ((SpongeUser) user).getPlayer();
+        ServerPlayer player = ((SpongeUser) user).getPlayer();
         if (player != null) {
             reloadPlayer(player);
         }

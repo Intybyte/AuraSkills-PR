@@ -56,7 +56,7 @@ import dev.aurelium.auraskills.sponge.loot.LootTableManager;
 import dev.aurelium.auraskills.sponge.mana.SpongeManaAbilityManager;
 import dev.aurelium.auraskills.sponge.menus.MenuFileManager;
 import dev.aurelium.auraskills.sponge.message.SpongeMessageProvider;
-import dev.aurelium.auraskills.sponge.modifier.BukkitModifierManager;
+import dev.aurelium.auraskills.sponge.modifier.SpongeModifierManager;
 import dev.aurelium.auraskills.sponge.region.SpongeRegionManager;
 import dev.aurelium.auraskills.sponge.region.BukkitWorldManager;
 import dev.aurelium.auraskills.sponge.requirement.RequirementManager;
@@ -83,7 +83,6 @@ import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.parameter.Parameter;
 import org.spongepowered.api.config.DefaultConfig;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
@@ -153,7 +152,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private SpongeRegionManager regionManager;
     private BukkitWorldManager worldManager;
     private LootTableManager lootTableManager;
-    private BukkitModifierManager modifierManager;
+    private SpongeModifierManager modifierManager;
     private RequirementManager requirementManager;
     private BackupProvider backupProvider;
     private InventoryManager inventoryManager;
@@ -232,7 +231,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         xpRequirements = new XpRequirements(this);
         leaderboardManager = new LeaderboardManager(this);
         uiProvider = new BukkitUiProvider(this);
-        modifierManager = new BukkitModifierManager(this);
+        modifierManager = new SpongeModifierManager(this);
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
         rewardManager = new BukkitRewardManager(this); // Loaded later
