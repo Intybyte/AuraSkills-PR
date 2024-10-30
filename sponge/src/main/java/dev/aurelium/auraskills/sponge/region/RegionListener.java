@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class RegionListener implements Listener {
 
     private final AuraSkills plugin;
-    private final BukkitRegionManager regionManager;
+    private final SpongeRegionManager regionManager;
 
     public RegionListener(AuraSkills plugin) {
         this.plugin = plugin;

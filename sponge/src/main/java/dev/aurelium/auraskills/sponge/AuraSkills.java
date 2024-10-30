@@ -16,7 +16,6 @@ import dev.aurelium.auraskills.common.event.EventHandler;
 import dev.aurelium.auraskills.common.hooks.HookManager;
 import dev.aurelium.auraskills.common.item.ItemRegistry;
 import dev.aurelium.auraskills.common.leaderboard.LeaderboardManager;
-import dev.aurelium.auraskills.common.level.LevelManager;
 import dev.aurelium.auraskills.common.level.XpRequirements;
 import dev.aurelium.auraskills.common.mana.ManaAbilityManager;
 import dev.aurelium.auraskills.common.mana.ManaAbilityRegistry;
@@ -58,7 +57,7 @@ import dev.aurelium.auraskills.sponge.mana.SpongeManaAbilityManager;
 import dev.aurelium.auraskills.sponge.menus.MenuFileManager;
 import dev.aurelium.auraskills.sponge.message.SpongeMessageProvider;
 import dev.aurelium.auraskills.sponge.modifier.BukkitModifierManager;
-import dev.aurelium.auraskills.sponge.region.BukkitRegionManager;
+import dev.aurelium.auraskills.sponge.region.SpongeRegionManager;
 import dev.aurelium.auraskills.sponge.region.BukkitWorldManager;
 import dev.aurelium.auraskills.sponge.requirement.RequirementManager;
 import dev.aurelium.auraskills.sponge.reward.BukkitRewardManager;
@@ -150,7 +149,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private MenuFileManager menuFileManager;
     private SpongeCommandManager commandManager;
 
-    private BukkitRegionManager regionManager;
+    private SpongeRegionManager regionManager;
     private BukkitWorldManager worldManager;
     private LootTableManager lootTableManager;
     private BukkitModifierManager modifierManager;
@@ -227,7 +226,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         // Load blocked/disabled worlds lists
         worldManager = new BukkitWorldManager(this);
         worldManager.loadWorlds(); // Requires generateConfigs before
-        regionManager = new BukkitRegionManager(this);
+        regionManager = new SpongeRegionManager(this);
         backupProvider = new BackupProvider(this);
         xpRequirements = new XpRequirements(this);
         leaderboardManager = new LeaderboardManager(this);
@@ -331,7 +330,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @Override
-    public LevelManager getLevelManager() {
+    public SpongeLevelManager getLevelManager() {
         return levelManager;
     }
 

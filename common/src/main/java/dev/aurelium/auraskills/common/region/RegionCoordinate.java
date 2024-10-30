@@ -9,6 +9,8 @@ public class RegionCoordinate {
     private final int z;
 
     public RegionCoordinate(String worldName, int x, int z) {
+        //we want the full key
+        assert worldName.contains(":");
         this.worldName = worldName;
         this.x = x;
         this.z = z;
