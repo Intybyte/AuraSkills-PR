@@ -4,16 +4,21 @@ import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.sponge.damage.DamageHandler;
 import dev.aurelium.auraskills.api.damage.DamageType;
 import dev.aurelium.auraskills.sponge.damage.DamageResult;
-import org.bukkit.Material;
-import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.entity.projectile.Projectile;
+import org.spongepowered.api.event.Cause;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.projectile.source.ProjectileSource;
 
-public class DamageListener implements Listener {
+import java.util.Optional;
+
+public class DamageListener {
 
     private final AuraSkills plugin;
     private final DamageHandler damageHandler;
@@ -23,15 +28,19 @@ public class DamageListener implements Listener {
         this.damageHandler = new DamageHandler();
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onDamage(EntityDamageByEntityEvent event) {
+    @Listener
+    public void onDamage(final DamageEntityEvent event) {
         // Check if not cancelled
         if (event.isCancelled()) {
             return;
         }
 
+        // Get the entity that is damaged
+        Entity entity = event.entity();
+
         // Gets the player who dealt damage
-        Player player = getDamager(event.getDamager());
+        ServerPlayer player = getDamager(event.cause());
+
         if (player != null) {
             if (plugin.getWorldManager().isInDisabledWorld(player.getLocation())) {
                 return;
@@ -90,16 +99,30 @@ public class DamageListener implements Listener {
     }
 
     @Nullable
-    private Player getDamager(Entity entity) {
-        Player player = null;
-        if (entity instanceof Player) {
-            player = (Player) entity;
-        } else if (entity instanceof Projectile projectile) {
-            EntityType type = projectile.getType();
-            if (type == EntityType.ARROW || type == EntityType.SPECTRAL_ARROW || type.toString().equals("TRIDENT") ||
-                    type.toString().equals("TIPPED_ARROW")) {
-                if (projectile.getShooter() instanceof Player) {
-                    player = (Player) projectile.getShooter();
+    private ServerPlayer getDamager(Cause cause) {
+        Entity source = cause.first(Entity.class).orElse(null);
+        if (source == null) {
+            return null;
+        }
+
+        ServerPlayer player = null;
+        if (source instanceof ServerPlayer) {
+            player = (ServerPlayer) source;
+        } else if (source instanceof Projectile projectile) {
+            EntityType<?> type = projectile.type();
+            if (type == EntityTypes.ARROW || type == EntityTypes.SPECTRAL_ARROW || type == EntityTypes.TRIDENT /*
+                There was tipped arrow too, but can't find it and it is probably inside EntityTypes.ARROW,
+                idc about compatibility for now as it is a TODO backwards compatibility for entityTypes
+                it is more important to get this up and running, the api differences between versions looks major in some part
+                so no idea if i will be able to add compatibility
+            */) {
+                Optional<Value.Mutable<ProjectileSource>> optionalShooter = projectile.shooter();
+
+                if (optionalShooter.isEmpty()) return null;
+
+
+                if (optionalShooter.get() instanceof ServerPlayer) {
+                    player = (ServerPlayer) optionalShooter.get();
                 }
             }
         }

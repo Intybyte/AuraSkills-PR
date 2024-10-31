@@ -2,9 +2,8 @@ package dev.aurelium.auraskills.api.event.skill;
 
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.skill.Skills;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.event.Cause;
+import org.spongepowered.api.event.Event;
 
 import java.util.Set;
 
@@ -14,9 +13,7 @@ import java.util.Set;
  * this event calls. Listen to this event if accessing methods on default {@link Skills}
  * during plugin startup instead of in onEnable.
  */
-public class SkillsLoadEvent extends Event {
-
-    private static final HandlerList handlers = new HandlerList();
+public class SkillsLoadEvent implements Event {
 
     private final Set<Skill> skills;
 
@@ -34,14 +31,8 @@ public class SkillsLoadEvent extends Event {
         return skills;
     }
 
-    @NotNull
     @Override
-    public HandlerList getHandlers() {
-        return handlers;
+    public Cause cause() {
+        return null;
     }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
 }

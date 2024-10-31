@@ -1,21 +1,23 @@
 package dev.aurelium.auraskills.api.damage;
 
 import dev.aurelium.auraskills.api.AuraSkillsApi;
+import dev.aurelium.auraskills.api.source.type.DamageXpSource;
 import dev.aurelium.auraskills.api.user.SkillsUser;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.projectiles.ProjectileSource;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.entity.projectile.Projectile;
+import org.spongepowered.api.projectile.source.ProjectileSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DamageMeta {
 
     private final DamageType damageType;
-    private final EntityDamageEvent.DamageCause damageCause;
+    private final DamageXpSource.DamageCause damageCause;
     private final List<DamageModifier> attackModifiers = new ArrayList<>();
     private final List<DamageModifier> defenseModifiers = new ArrayList<>();
     private final Entity attacker;
@@ -23,7 +25,7 @@ public class DamageMeta {
     private final String source;
     private double damage;
 
-    public DamageMeta(@Nullable Entity attacker, Entity target, DamageType damageType, EntityDamageEvent.DamageCause damageCause, double damage, String source) {
+    public DamageMeta(@Nullable Entity attacker, Entity target, DamageType damageType, DamageXpSource.DamageCause damageCause, double damage, String source) {
         this.attacker = attacker;
         this.target = target;
         this.damageType = damageType;
@@ -36,7 +38,7 @@ public class DamageMeta {
         return damage;
     }
 
-    public EntityDamageEvent.DamageCause getDamageCause() {
+    public DamageXpSource.DamageCause getDamageCause() {
         return damageCause;
     }
 
@@ -70,41 +72,46 @@ public class DamageMeta {
     }
 
     @Nullable
-    public Player getAttackerAsPlayer() {
-        if (attacker instanceof Player) {
-            return (Player) attacker;
+    public ServerPlayer getAttackerAsPlayer() {
+        if (attacker instanceof ServerPlayer) {
+            return (ServerPlayer) attacker;
         }
         if (attacker instanceof Projectile) {
-            ProjectileSource shooter = ((Projectile) attacker).getShooter();
-            if (shooter instanceof Player) {
-                return (Player) shooter;
+            Optional<Value.Mutable<ProjectileSource>> optionalShooter = ((Projectile) attacker).shooter();
+            if(optionalShooter.isEmpty()) {
+                return null;
+            }
+
+            ProjectileSource shooter = optionalShooter.get().get();
+            if (optionalShooter.get().get() instanceof ServerPlayer) {
+                return (ServerPlayer) shooter;
             }
         }
         return null;
     }
 
     @Nullable
-    public Player getTargetAsPlayer() {
-        if (target instanceof Player) {
-            return (Player) target;
+    public ServerPlayer getTargetAsPlayer() {
+        if (target instanceof ServerPlayer) {
+            return (ServerPlayer) target;
         }
         return null;
     }
 
     @Nullable
     public SkillsUser getAttackerAsUser() {
-        Player player = getAttackerAsPlayer();
+        ServerPlayer player = getAttackerAsPlayer();
         if (player != null) {
-            return AuraSkillsApi.get().getUser(player.getUniqueId());
+            return AuraSkillsApi.get().getUser(player.uniqueId());
         }
         return null;
     }
 
     @Nullable
     public SkillsUser getTargetAsUser() {
-        Player player = getTargetAsPlayer();
+        ServerPlayer player = getTargetAsPlayer();
         if (player != null) {
-            return AuraSkillsApi.get().getUser(player.getUniqueId());
+            return AuraSkillsApi.get().getUser(player.uniqueId());
         }
         return null;
     }

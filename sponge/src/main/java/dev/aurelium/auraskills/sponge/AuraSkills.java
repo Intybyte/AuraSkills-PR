@@ -177,7 +177,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @Listener
-    public void onConstructPlugin(final ConstructPluginEvent event) {
+    public void onConstructPlugin(final ConstructPluginEvent construct) {
         // Register the API
         this.api = new ApiAuraSkills(this);
         this.apiProvider = new BukkitApiProvider(this);
@@ -244,7 +244,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         CommandRegistrar commandRegistrar = new CommandRegistrar(this);
         commandManager = commandRegistrar.registerCommands();
         messageProvider.setACFMessages(commandManager);
-        levelManager = new BukkitLevelManager(this);
+        levelManager = new SpongeLevelManager(this);
         antiAfkManager = new AntiAfkManager(this); // Requires config loaded
         registerPriorityEvents();
         // Enabled bStats
@@ -267,7 +267,7 @@ public class AuraSkills implements AuraSkillsPlugin {
             registerAndLoadMenus();
             // Call SkillsLoadEvent
             SkillsLoadEvent event = new SkillsLoadEvent(skillManager.getSkillValues());
-            Bukkit.getPluginManager().callEvent(event);
+            Sponge.eventManager().post(event);
             // Start updating leaderboards
             leaderboardManager.updateLeaderboards(); // Immediately update leaderboards
             leaderboardManager.startLeaderboardUpdater(); // 5 minute interval

@@ -2,14 +2,11 @@ package dev.aurelium.auraskills.api.event.damage;
 
 import dev.aurelium.auraskills.api.damage.DamageMeta;
 import dev.aurelium.auraskills.api.damage.DamageModifier;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.Cause;
+import org.spongepowered.api.event.Event;
 
-public class DamageEvent extends Event implements Cancellable {
-
-    private static final HandlerList handlers = new HandlerList();
+public class DamageEvent implements Cancellable, Event {
     private final DamageMeta damageMeta;
 
     private boolean cancelled = false;
@@ -30,16 +27,6 @@ public class DamageEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     public double getModifiedAttackDamage() {
@@ -68,6 +55,11 @@ public class DamageEvent extends Event implements Cancellable {
         }
 
         return calc.getDamage() * (1 + additive);
+    }
+
+    @Override
+    public Cause cause() {
+        return damageMeta.getAttacker();
     }
 
     static class DamageCalculation {
