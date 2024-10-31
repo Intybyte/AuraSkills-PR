@@ -32,7 +32,7 @@ public class ExcavationAbilities extends AbilityImpl {
         var attacker = meta.getAttackerAsPlayer();
 
         if (attacker != null) {
-            if (meta.getDamageType() == DamageType.SHOVEL) {
+            if (meta.getAureliumDamageType() == DamageType.SHOVEL) {
                 var user = plugin.getUser(attacker);
                 meta.addAttackModifier(spadeMaster(attacker, user));
             }

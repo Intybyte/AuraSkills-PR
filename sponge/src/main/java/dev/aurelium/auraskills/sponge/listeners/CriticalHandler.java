@@ -1,7 +1,6 @@
 package dev.aurelium.auraskills.sponge.listeners;
 
 import dev.aurelium.auraskills.api.damage.DamageMeta;
-import dev.aurelium.auraskills.api.damage.DamageType;
 import dev.aurelium.auraskills.api.event.damage.DamageEvent;
 import dev.aurelium.auraskills.api.trait.Traits;
 import dev.aurelium.auraskills.sponge.AuraSkills;
@@ -30,7 +29,7 @@ public class CriticalHandler implements Listener {
         Player attacker = meta.getAttackerAsPlayer();
 
         if (attacker != null &&
-                plugin.configBoolean(Option.valueOf("CRITICAL_ENABLED_" + event.getDamageMeta().getDamageType().name()))) {
+                plugin.configBoolean(Option.valueOf("CRITICAL_ENABLED_" + event.getDamageMeta().getAureliumDamageType().name()))) {
             User user = plugin.getUser(attacker);
             meta.addAttackModifier(getCrit(attacker, user));
         }

@@ -144,7 +144,7 @@ public class ChargedShot extends ManaAbilityProvider {
         DamageMeta meta = event.getDamageMeta();
         Entity attacker = meta.getAttacker();
 
-        if (attacker != null && meta.getDamageType() == DamageType.BOW) {
+        if (attacker != null && meta.getAureliumDamageType() == DamageType.BOW) {
             meta.addAttackModifier(applyChargedShot(attacker));
         }
     }

@@ -1,7 +1,6 @@
 package dev.aurelium.auraskills.api.damage;
 
 import dev.aurelium.auraskills.api.AuraSkillsApi;
-import dev.aurelium.auraskills.api.source.type.DamageXpSource;
 import dev.aurelium.auraskills.api.user.SkillsUser;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.data.value.Value;
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class DamageMeta {
 
     private final DamageType damageType;
-    private final DamageXpSource.DamageCause damageCause;
+    private final org.spongepowered.api.event.cause.entity.damage.DamageType damageCause;
     private final List<DamageModifier> attackModifiers = new ArrayList<>();
     private final List<DamageModifier> defenseModifiers = new ArrayList<>();
     private final Entity attacker;
@@ -25,7 +24,7 @@ public class DamageMeta {
     private final String source;
     private double damage;
 
-    public DamageMeta(@Nullable Entity attacker, Entity target, DamageType damageType, DamageXpSource.DamageCause damageCause, double damage, String source) {
+    public DamageMeta(@Nullable Entity attacker, Entity target, DamageType damageType, org.spongepowered.api.event.cause.entity.damage.DamageType damageCause, double damage, String source) {
         this.attacker = attacker;
         this.target = target;
         this.damageType = damageType;
@@ -38,7 +37,7 @@ public class DamageMeta {
         return damage;
     }
 
-    public DamageXpSource.DamageCause getDamageCause() {
+    public org.spongepowered.api.event.cause.entity.damage.DamageType getDamageType() {
         return damageCause;
     }
 
@@ -58,7 +57,7 @@ public class DamageMeta {
         this.defenseModifiers.add(modifier);
     }
 
-    public DamageType getDamageType() {
+    public DamageType getAureliumDamageType() {
         return damageType;
     }
 

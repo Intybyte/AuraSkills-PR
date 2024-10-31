@@ -83,7 +83,7 @@ public class FarmingAbilities extends AbilityImpl {
         var attacker = meta.getAttackerAsPlayer();
 
         if (attacker != null) {
-            if (meta.getDamageType() == DamageType.HOE) {
+            if (meta.getAureliumDamageType() == DamageType.HOE) {
                 var user = plugin.getUser(attacker);
                 meta.addAttackModifier(scytheMaster(attacker, user));
             }

@@ -40,7 +40,7 @@ public class ForagingAbilities extends AbilityImpl {
         var attacker = meta.getAttackerAsPlayer();
 
         if (attacker != null) {
-            if (meta.getDamageType() == DamageType.AXE) {
+            if (meta.getAureliumDamageType() == DamageType.AXE) {
                 var user = plugin.getUser(attacker);
                 meta.addAttackModifier(axeMaster(attacker, user));
             }

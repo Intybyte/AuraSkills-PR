@@ -57,7 +57,7 @@ public class MiningAbilities extends AbilityImpl {
         var attacker = meta.getAttackerAsPlayer();
 
         if (attacker != null) {
-            if (meta.getDamageType() == DamageType.PICKAXE) {
+            if (meta.getAureliumDamageType() == DamageType.PICKAXE) {
                 var user = plugin.getUser(attacker);
                 meta.addAttackModifier(pickMaster(attacker, user));
             }

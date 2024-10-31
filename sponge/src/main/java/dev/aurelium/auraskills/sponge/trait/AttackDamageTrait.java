@@ -37,11 +37,11 @@ public class AttackDamageTrait extends TraitImpl {
             Trait trait = Traits.ATTACK_DAMAGE;
             if (!trait.isEnabled()) return;
 
-            if (meta.getDamageType() == DamageType.HAND && !trait.optionBoolean("hand_damage")) {
+            if (meta.getAureliumDamageType() == DamageType.HAND && !trait.optionBoolean("hand_damage")) {
                 return;
             }
 
-            if (meta.getDamageType() == DamageType.BOW && !trait.optionBoolean("bow_damage")) {
+            if (meta.getAureliumDamageType() == DamageType.BOW && !trait.optionBoolean("bow_damage")) {
                 return;
             }
 

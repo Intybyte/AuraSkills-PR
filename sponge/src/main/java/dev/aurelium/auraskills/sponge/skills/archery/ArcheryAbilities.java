@@ -65,7 +65,7 @@ public class ArcheryAbilities extends AbilityImpl {
 
         if (attacker != null) {
             User user = plugin.getUser(attacker);
-            if (meta.getDamageType() == DamageType.BOW) {
+            if (meta.getAureliumDamageType() == DamageType.BOW) {
                 meta.addAttackModifier(bowMaster(attacker, user));
             }
         }

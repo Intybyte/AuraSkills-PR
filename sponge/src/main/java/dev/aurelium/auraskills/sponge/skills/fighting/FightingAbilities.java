@@ -135,7 +135,7 @@ public class FightingAbilities extends AbilityImpl {
         var target = meta.getTargetAsPlayer();
 
         if (attacker != null) {
-            if (meta.getDamageType() == DamageType.SWORD) {
+            if (meta.getAureliumDamageType() == DamageType.SWORD) {
                 var user = plugin.getUser(attacker);
                 meta.addAttackModifier(swordMaster(attacker, user));
                 meta.addAttackModifier(firstStrike(user, attacker));

@@ -16,6 +16,7 @@ import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.entity.projectile.arrow.SpectralArrow;
 import org.spongepowered.api.entity.projectile.arrow.Trident;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.item.ItemType;
