@@ -3,24 +3,25 @@ package dev.aurelium.auraskills.sponge.region;
 import dev.aurelium.auraskills.sponge.AuraSkills;
 import dev.aurelium.auraskills.common.config.ConfigurateLoader;
 import dev.aurelium.auraskills.common.region.WorldManager;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.spongepowered.api.world.server.ServerLocation;
+import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
-public class BukkitWorldManager implements WorldManager {
+public class SpongeWorldManager implements WorldManager {
 
     private Set<String> blockedWorlds;
     private Set<String> disabledWorlds;
     private Set<String> blockedCheckBlockReplaceWorlds;
     private final AuraSkills plugin;
 
-    public BukkitWorldManager(AuraSkills plugin) {
+    public SpongeWorldManager(AuraSkills plugin) {
         this.plugin = plugin;
     }
 
@@ -34,14 +35,17 @@ public class BukkitWorldManager implements WorldManager {
             disabledWorlds = new HashSet<>();
             blockedCheckBlockReplaceWorlds = new HashSet<>();
             for (String blockedWorld : config.node("blocked_worlds").getList(String.class, new ArrayList<>())) {
+                assert blockedWorld.contains(":") : "World must be full id with key:world";
                 blockedWorlds.add(blockedWorld);
                 blockedWorldsLoaded++;
             }
             for (String blockedWorld : config.node("disabled_worlds").getList(String.class, new ArrayList<>())) {
+                assert blockedWorld.contains(":") : "World must be full id with key:world";
                 disabledWorlds.add(blockedWorld);
                 blockedWorldsLoaded++;
             }
             for (String blockedWorld : config.node("check_block_replace", "blocked_worlds").getList(String.class, new ArrayList<>())) {
+                assert blockedWorld.contains(":") : "World must be full id with key:world";
                 blockedCheckBlockReplaceWorlds.add(blockedWorld);
                 blockedWorldsLoaded++;
             }
@@ -51,28 +55,32 @@ public class BukkitWorldManager implements WorldManager {
         }
     }
 
-    public boolean isInBlockedWorld(Location location) {
-        if (location.getWorld() == null) {
+    public boolean isInBlockedWorld(ServerLocation location) {
+        Optional<ServerWorld> worldOpt = location.worldIfAvailable();
+        if (worldOpt.isEmpty()) {
             return false;
         }
-        World world = location.getWorld();
-        return disabledWorlds.contains(world.getName()) || blockedWorlds.contains(world.getName());
+        ServerWorld world = worldOpt.get();
+
+        return disabledWorlds.contains(world.key().asString()) || blockedWorlds.contains(world.key().asString());
     }
 
-    public boolean isInDisabledWorld(Location location) {
-        if (location.getWorld() == null) {
+    public boolean isInDisabledWorld(ServerLocation location) {
+        Optional<ServerWorld> worldOpt = location.worldIfAvailable();
+        if (worldOpt.isEmpty()) {
             return false;
         }
-        World world = location.getWorld();
-        return disabledWorlds.contains(world.getName());
+        ServerWorld world = worldOpt.get();
+        return disabledWorlds.contains(world.key().asString());
     }
 
-    public boolean isCheckReplaceDisabled(Location location) {
-        if (location.getWorld() == null) {
+    public boolean isCheckReplaceDisabled(ServerLocation location) {
+        Optional<ServerWorld> worldOpt = location.worldIfAvailable();
+        if (worldOpt.isEmpty()) {
             return false;
         }
-        World world = location.getWorld();
-        return blockedCheckBlockReplaceWorlds.contains(world.getName());
+        ServerWorld world = worldOpt.get();
+        return blockedCheckBlockReplaceWorlds.contains(world.key().asString());
     }
 
     @Override

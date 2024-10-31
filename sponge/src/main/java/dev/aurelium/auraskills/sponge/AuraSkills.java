@@ -61,7 +61,7 @@ import dev.aurelium.auraskills.sponge.menus.MenuFileManager;
 import dev.aurelium.auraskills.sponge.message.SpongeMessageProvider;
 import dev.aurelium.auraskills.sponge.modifier.SpongeModifierManager;
 import dev.aurelium.auraskills.sponge.region.SpongeRegionManager;
-import dev.aurelium.auraskills.sponge.region.BukkitWorldManager;
+import dev.aurelium.auraskills.sponge.region.SpongeWorldManager;
 import dev.aurelium.auraskills.sponge.requirement.RequirementManager;
 import dev.aurelium.auraskills.sponge.reward.BukkitRewardManager;
 import dev.aurelium.auraskills.sponge.scheduler.BukkitScheduler;
@@ -80,7 +80,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.logging.log4j.Logger;
-import org.bstats.sponge.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
@@ -155,7 +154,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     private SpongeCommandManager commandManager;
 
     private SpongeRegionManager regionManager;
-    private BukkitWorldManager worldManager;
+    private SpongeWorldManager worldManager;
     private LootTableManager lootTableManager;
     private SpongeModifierManager modifierManager;
     private RequirementManager requirementManager;
@@ -228,7 +227,7 @@ public class AuraSkills implements AuraSkillsPlugin {
         initStorageProvider();
         migrationManager.attemptUserMigration();
         // Load blocked/disabled worlds lists
-        worldManager = new BukkitWorldManager(this);
+        worldManager = new SpongeWorldManager(this);
         worldManager.loadWorlds(); // Requires generateConfigs before
         regionManager = new SpongeRegionManager(this);
         backupProvider = new BackupProvider(this);
@@ -439,7 +438,7 @@ public class AuraSkills implements AuraSkillsPlugin {
     }
 
     @Override
-    public WorldManager getWorldManager() {
+    public SpongeWorldManager getWorldManager() {
         return worldManager;
     }
 
