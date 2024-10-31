@@ -5,16 +5,23 @@ import dev.aurelium.auraskills.sponge.damage.DamageHandler;
 import dev.aurelium.auraskills.api.damage.DamageType;
 import dev.aurelium.auraskills.sponge.damage.DamageResult;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.projectile.Projectile;
-import org.spongepowered.api.event.Cause;
+import org.spongepowered.api.entity.projectile.arrow.Arrow;
+import org.spongepowered.api.entity.projectile.arrow.SpectralArrow;
+import org.spongepowered.api.entity.projectile.arrow.Trident;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.projectile.source.ProjectileSource;
+import org.spongepowered.api.tag.ItemTypeTags;
 
 import java.util.Optional;
 
@@ -39,32 +46,39 @@ public class DamageListener {
         Entity entity = event.entity();
 
         // Gets the player who dealt damage
-        ServerPlayer player = getDamager(event.cause());
+        Entity attackerEntity = event.cause().first(Entity.class).orElse(null);
+        ServerPlayer player = getPlayerAttacker(attackerEntity);
+
+        DamageSource dmgSource = event.cause().first(DamageSource.class).orElse(null);
+        org.spongepowered.api.event.cause.entity.damage.DamageType damageType = null;
+        if (dmgSource != null) {
+            damageType = dmgSource.type();;
+        }
 
         if (player != null) {
-            if (plugin.getWorldManager().isInDisabledWorld(player.getLocation())) {
+            if (plugin.getWorldManager().isInDisabledWorld(player.serverLocation())) {
                 return;
             }
             if (player.hasMetadata("NPC")) return;
-            if (event.getCause() == EntityDamageEvent.DamageCause.THORNS) return;
+            if (event.cause() == EntityDamageEvent.DamageCause.THORNS) return;
         }
 
         // Handles being damaged
-        if (event.getEntity() instanceof Player target) {
-            if (plugin.getWorldManager().isInDisabledWorld(target.getLocation())) {
+        if (entity instanceof ServerPlayer target) {
+            if (plugin.getWorldManager().isInDisabledWorld(target.serverLocation())) {
                 return;
             }
             if (target.hasMetadata("NPC")) return;
         }
 
-        if (player == null && !(event.getEntity() instanceof Player)) {
+        if (player == null && !(entity instanceof ServerPlayer)) {
             // We have nothing to do here
             return;
         }
 
         DamageResult result = damageHandler.handleDamage(
-                event.getDamager(), event.getEntity(), getDamageType(event, player),
-                event.getCause(), event.getDamage(), "vanilla");
+                player, entity, getDamageType(attackerEntity, player),
+                damageType, event.finalDamage(), "vanilla");
 
         if (result.cancel()) {
             event.setCancelled(true);
@@ -74,33 +88,32 @@ public class DamageListener {
     }
 
     @SuppressWarnings("deprecation")
-    private DamageType getDamageType(EntityDamageByEntityEvent event, Player player) {
+    private DamageType getDamageType(Entity damager, ServerPlayer player) {
         if (player == null) return DamageType.OTHER;
-        if (event.getDamager() instanceof Arrow || event.getDamager() instanceof SpectralArrow || event.getDamager() instanceof TippedArrow) {
+        if (damager instanceof Arrow || damager instanceof SpectralArrow || damager instanceof Trident) {
             return DamageType.BOW;
         }
-        Material material = player.getInventory().getItemInMainHand().getType();
-        if (material.name().contains("SWORD")) {
+        ItemType material = player.itemInHand(HandTypes.MAIN_HAND).type();
+        if (material.is(ItemTypeTags.SWORDS)) {
             return DamageType.SWORD;
-        } else if (material.name().contains("_AXE")) {
+        } else if (material.is(ItemTypeTags.AXES)) {
             return DamageType.AXE;
-        } else if (material.name().contains("PICKAXE")) {
+        } else if (material.is(ItemTypeTags.PICKAXES)) {
             return DamageType.PICKAXE;
-        } else if (material.name().contains("SHOVEL") || material.name().contains("SPADE")) {
+        } else if (material.is(ItemTypeTags.SHOVELS)) {
+            //this is the past checked for items named SPADES too
             return DamageType.SHOVEL;
-        } else if (material.name().contains("HOE")) {
+        } else if (material.is(ItemTypeTags.HOES)) {
             return DamageType.HOE;
-        } else if (material.equals(Material.AIR)) {
+        } else if (material == ItemTypes.AIR) {
             return DamageType.HAND;
-        } else if (event.getDamager() instanceof Trident) {
-            return DamageType.BOW;
         }
+
         return DamageType.OTHER;
     }
 
     @Nullable
-    private ServerPlayer getDamager(Cause cause) {
-        Entity source = cause.first(Entity.class).orElse(null);
+    private ServerPlayer getPlayerAttacker(Entity source) {
         if (source == null) {
             return null;
         }
