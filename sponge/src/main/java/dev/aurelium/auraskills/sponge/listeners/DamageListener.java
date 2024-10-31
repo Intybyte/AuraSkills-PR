@@ -16,6 +16,7 @@ import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.entity.projectile.arrow.SpectralArrow;
 import org.spongepowered.api.entity.projectile.arrow.Trident;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.entity.damage.DamageModifier;
 import org.spongepowered.api.event.cause.entity.damage.DamageTypes;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -60,8 +61,9 @@ public class DamageListener {
             if (plugin.getWorldManager().isInDisabledWorld(player.serverLocation())) {
                 return;
             }
-            if (player.hasMetadata("NPC")) return;
-            if (event.cause() == EntityDamageEvent.DamageCause.THORNS) return;
+            //TODO: Figure out what this NPC metadata refers to or checks
+            //if (player.hasMetadata("NPC")) return;
+            if (damageType == DamageTypes.THORNS) return;
         }
 
         // Handles being damaged
@@ -69,7 +71,7 @@ public class DamageListener {
             if (plugin.getWorldManager().isInDisabledWorld(target.serverLocation())) {
                 return;
             }
-            if (target.hasMetadata("NPC")) return;
+            //if (target.hasMetadata("NPC")) return;
         }
 
         if (player == null && !(entity instanceof ServerPlayer)) {
